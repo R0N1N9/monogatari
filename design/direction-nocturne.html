@@ -1,0 +1,255 @@
+<title>monogatari · Nocturne</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Direction C — "Nocturne": dark, cinematic, immersive. Each chapter is a lit scene; photos glow
+     against deep ink; a high-contrast display serif and warm accent give a filmic, memory-like mood.
+     A deliberately single, dark visual world. */
+  :root{
+    --bg:#0A0C11; --panel:#10131A; --panel-2:#161A23;
+    --ink:#ECE7DD; --ink-soft:#9FA3AE; --ink-faint:#6B6F7B;
+    --line:#20242F; --gold:#D6A24C; --gold-soft:#E9C584; --teal:#6F99A2;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-ui:"Inter",system-ui,-apple-system,Segoe UI,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);
+    -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background:radial-gradient(130% 80% at 50% -10%,rgba(214,162,76,.10),transparent 60%)}
+  .safe-top{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:40}
+  .gutter{padding-left:max(20px,env(safe-area-inset-left,0px));
+          padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+  .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;align-items:center;
+    gap:14px;padding-block:16px;background:linear-gradient(var(--bg),color-mix(in srgb,var(--bg) 10%,transparent))}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand .kanji{color:var(--gold);font-family:var(--font-display);font-size:22px;font-weight:600}
+  .brand .mark{font-family:var(--font-display);font-weight:600;font-size:25px;letter-spacing:.02em}
+  .spacer{flex:1}
+  .pill{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
+    font-family:var(--font-ui);font-size:12px;font-weight:500;padding:9px 15px;border-radius:999px;
+    cursor:pointer;display:flex;align-items:center;gap:8px;transition:.18s;letter-spacing:.02em}
+  .pill:hover{color:var(--ink);border-color:var(--gold)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal)}
+
+  .stage{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1}
+  .wrap{max-width:900px;margin:0 auto;padding-top:26px;padding-bottom:150px}
+
+  .title-card{text-align:center;padding:40px 0 20px}
+  .title-card .eye{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+  .title-card h1{font-family:var(--font-display);font-weight:600;font-size:clamp(42px,9vw,78px);
+    line-height:1.02;margin:.22em 0;text-wrap:balance;letter-spacing:.01em}
+  .title-card p{font-family:var(--font-display);font-style:italic;font-size:clamp(18px,3.4vw,24px);
+    color:var(--ink-soft);margin:0 auto;max-width:34ch}
+  .reel{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:26px;color:var(--ink-faint)}
+  .reel .ln{height:1px;width:52px;background:var(--line)}
+  .reel svg{width:16px;height:16px}
+
+  .scene{margin:64px 0;position:relative}
+  .scene .slate{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+  .scene .no{font-family:var(--font-display);font-size:15px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--gold);font-weight:600}
+  .scene .yr{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
+  .frame{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:21/9;
+    box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px var(--line)}
+  .frame .img{width:100%;height:100%}
+  .frame::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 130% at 50% 40%,transparent 48%,rgba(0,0,0,.6))}
+  .frame .bars{position:absolute;inset:0;pointer-events:none}
+  .frame .bars::before,.frame .bars::after{content:"";position:absolute;left:0;right:0;height:7%;
+    background:rgba(0,0,0,.55)}
+  .frame .bars::before{top:0}.frame .bars::after{bottom:0}
+  .frame .cap{position:absolute;left:18px;bottom:16px;z-index:2;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:7px}
+  .frame .cap svg{width:12px;height:12px}
+
+  .scene h2{font-family:var(--font-display);font-weight:600;font-size:clamp(30px,6vw,48px);line-height:1.04;
+    margin:26px 0 .4em;text-wrap:balance}
+  .scene p{font-size:16.5px;line-height:1.8;color:var(--ink-soft);max-width:60ch}
+  .scene p em{color:var(--ink);font-style:italic}
+
+  .strip{display:flex;gap:8px;margin-top:22px;overflow-x:auto;padding-bottom:6px}
+  .strip figure{margin:0;flex:0 0 auto;width:132px}
+  .strip .sm{aspect-ratio:3/2;border-radius:4px;overflow:hidden;position:relative;border:1px solid var(--line)}
+  .strip .sm .img{width:100%;height:100%}
+  .strip figcaption{font-size:10.5px;color:var(--ink-faint);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
+
+  .img--dawn{background:linear-gradient(200deg,#e8b877,#cf7f63 45%,#4a4a70)}
+  .img--sea{background:linear-gradient(195deg,#9fcace,#4e868f 55%,#1f434c)}
+  .img--lamp{background:radial-gradient(70% 70% at 58% 38%,#ffd88c,#b06f2e 52%,#1c150f)}
+  .img--forest{background:linear-gradient(190deg,#a9c07f,#5a7a4c 50%,#1f3326)}
+  .img--snow{background:linear-gradient(200deg,#dfe8ee,#9aa6b2 60%,#555f6e)}
+  .img--room{background:linear-gradient(205deg,#dcc4aa,#9c7f6b 55%,#3e302b)}
+  .img--field{background:linear-gradient(195deg,#e2d48c,#a08f4e 55%,#4e4c28)}
+
+  .folder{margin-top:40px;background:linear-gradient(var(--panel),var(--panel-2));border:1px solid var(--line);
+    border-radius:12px;padding:24px;display:flex;gap:16px;align-items:center;cursor:pointer;transition:.2s}
+  .folder:hover{border-color:var(--gold)}
+  .folder .ico{width:46px;height:46px;border-radius:10px;background:var(--bg);display:grid;place-items:center;
+    color:var(--gold);flex:none;border:1px solid var(--line)}
+  .folder .ico svg{width:22px;height:22px}
+  .folder h3{font-family:var(--font-display);font-weight:600;font-size:23px;margin:0 0 3px}
+  .folder p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.5}
+
+  .dock{position:absolute;left:0;right:0;bottom:0;z-index:25;pointer-events:none;
+    padding-bottom:max(20px,env(safe-area-inset-bottom,0px));padding-top:44px;
+    background:linear-gradient(transparent,var(--bg) 58%)}
+  .dock .inner{max-width:900px;margin:0 auto;display:flex;justify-content:center}
+  .capsule{pointer-events:auto;display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);
+    border-radius:999px;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+  .cap-btn{appearance:none;border:0;background:transparent;color:var(--ink-soft);font-family:var(--font-ui);
+    font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;
+    cursor:pointer;transition:.16s;letter-spacing:.02em}
+  .cap-btn:hover{color:var(--ink);background:var(--panel-2)}
+  .cap-btn svg{width:17px;height:17px}
+  .cap-btn.mic{color:#1a1206;background:var(--gold)}
+  .cap-btn.mic:hover{background:var(--gold-soft)}
+
+  .scrim{position:fixed;inset:0;z-index:60;background:rgba(5,6,9,.74);backdrop-filter:blur(8px);
+    display:grid;place-items:center;padding:22px}
+  .sheet{position:relative;width:min(430px,100%);background:var(--panel);border:1px solid var(--line);
+    border-radius:18px;padding:30px;text-align:center;box-shadow:0 40px 90px rgba(0,0,0,.7)}
+  .sheet h3{font-family:var(--font-display);font-weight:600;font-size:30px;margin:0 0 8px}
+  .sheet p{font-size:14.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 4px}
+  .breath{width:140px;height:140px;margin:22px auto 10px;display:grid;place-items:center;position:relative}
+  .breath .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);
+    background:radial-gradient(circle,rgba(214,162,76,.2),transparent 70%);animation:breathe 11s ease-in-out infinite}
+  .breath .w{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft)}
+  @keyframes breathe{0%,100%{transform:scale(.66);opacity:.55}48%,52%{transform:scale(1);opacity:1}}
+  .lines{text-align:left;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+  .lines .r{display:flex;justify-content:space-between;font-size:14px;padding:6px 0}
+  .lines .r span{color:var(--ink-faint)}.lines .n{font-weight:600;font-variant-numeric:tabular-nums;color:var(--gold-soft)}
+  .soft{font-size:12px;color:var(--ink-faint);margin-top:14px;line-height:1.5}
+  .btn{appearance:none;border:0;background:var(--gold);color:#1a1206;font-family:var(--font-ui);font-size:13.5px;
+    font-weight:600;padding:12px 22px;border-radius:999px;cursor:pointer;margin-top:18px}
+  .x{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+    background:var(--bg);color:var(--ink-soft);cursor:pointer;display:grid;place-items:center}
+  .x svg{width:15px;height:15px}
+
+  .listening{position:fixed;left:50%;transform:translateX(-50%);
+    bottom:max(98px,calc(env(safe-area-inset-bottom,0px) + 98px));z-index:55;background:var(--panel-2);
+    border:1px solid var(--gold);color:var(--ink);border-radius:14px;padding:13px 19px;display:flex;
+    align-items:center;gap:14px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+  .wave{display:flex;align-items:center;gap:3px;height:24px}
+  .wave i{width:3px;background:var(--gold);border-radius:3px;animation:wv 1s ease-in-out infinite}
+  .wave i:nth-child(1){height:9px;animation-delay:0s}.wave i:nth-child(2){height:19px;animation-delay:.12s}
+  .wave i:nth-child(3){height:24px;animation-delay:.24s}.wave i:nth-child(4){height:14px;animation-delay:.36s}
+  .wave i:nth-child(5){height:20px;animation-delay:.18s}
+  @keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+  .listening .t{font-size:13px;line-height:1.4}
+  .listening .t b{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:2px}
+  .listening .stop{appearance:none;border:0;background:var(--line);color:var(--ink);width:32px;height:32px;
+    border-radius:50%;cursor:pointer;display:grid;place-items:center}
+  .listening .stop svg{width:13px;height:13px}
+
+  @media (max-width:560px){.frame{aspect-ratio:16/9}.brand .kanji{display:none}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+
+<div class="safe-top"></div>
+<header class="topbar gutter">
+  <div class="brand"><span class="kanji">物語</span><span class="mark">monogatari</span></div>
+  <div class="spacer"></div>
+  <button class="pill" id="groundBtn"><span class="dot"></span>Grounding</button>
+</header>
+
+<div class="stage" id="stage">
+  <div class="wrap gutter">
+    <div class="title-card">
+      <div class="eye">The epic of · Mara</div>
+      <h1>A House, a Leaving,<br>and the Long Way Home</h1>
+      <p>Thirty-one years, lit scene by scene — and slowly re-known.</p>
+      <div class="reel"><span class="ln"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="6" r="1.4"/><circle cx="12" cy="18" r="1.4"/><circle cx="6" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/></svg>
+        <span class="ln"></span></div>
+    </div>
+
+    <section class="scene">
+      <div class="slate"><span class="no">Scene I</span><span class="yr">Spring 1996 · age 4</span></div>
+      <div class="frame"><div class="img img--room"></div><div class="bars"></div>
+        <div class="cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg> May 1996 · Alder St. kitchen</div></div>
+      <h2>The House on Alder Street</h2>
+      <p>The kitchen was always warm and always loud. I remember the light more than anything — late
+        afternoon coming sideways through the window, turning the dust into something like snow.
+        <em>I did not know yet that a childhood could be a place you carry, not just a time you leave.</em></p>
+      <div class="strip">
+        <figure><div class="sm"><div class="img img--field"></div></div><figcaption>Jun 1996</figcaption></figure>
+        <figure><div class="sm"><div class="img img--dawn"></div></div><figcaption>Jun 1996</figcaption></figure>
+        <figure><div class="sm"><div class="img img--room"></div></div><figcaption>Aug 1996</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="slate"><span class="no">Scene II</span><span class="yr">Autumn 2011 · age 19</span></div>
+      <div class="frame"><div class="img img--lamp"></div><div class="bars"></div>
+        <div class="cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg> Dec 2011 · one lamp, one chair</div></div>
+      <h2>Leaving</h2>
+      <p>I packed the car in the dark so no one would see me cry. For a long time I told this as a story
+        about escape. Writing it now, I can see it was also a story about grief — <em>that you can need to
+        go and still lose something real in the going.</em> Both were true. I am allowed to hold both.</p>
+      <div class="strip">
+        <figure><div class="sm"><div class="img img--dawn"></div></div><figcaption>Sep 2011</figcaption></figure>
+        <figure><div class="sm"><div class="img img--snow"></div></div><figcaption>Nov 2011</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="scene">
+      <div class="slate"><span class="no">Scene III</span><span class="yr">Summer 2023 · age 31</span></div>
+      <div class="frame"><div class="img img--sea"></div><div class="bars"></div>
+        <div class="cap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg> Jul 2023 · the coast, again</div></div>
+      <h2>Small Mercies</h2>
+      <p>These days the healing is quiet and unglamorous. A morning walk. A friend who texts back. The old
+        story said I was someone things happened to. <em>The truer story, the one I am re-knowing here, is
+        that I am also someone who kept choosing to begin again.</em></p>
+      <div class="strip">
+        <figure><div class="sm"><div class="img img--forest"></div></div><figcaption>Aug 2023</figcaption></figure>
+      </div>
+      <div class="folder" id="folderBtn">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
+        <div><h3>Load from a folder or drive</h3><p>Each photo takes its place in the reel by the date it was shot. You never sort a frame.</p></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="dock"><div class="inner gutter"><div class="capsule">
+  <button class="cap-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20l4-1 10-10-3-3L5 16l-1 4Z"/><path d="M14 6l3 3"/></svg> Write</button>
+  <button class="cap-btn mic" id="micBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg> Dictate</button>
+  <button class="cap-btn" id="photoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.5"/></svg> Photos</button>
+</div></div></div>
+
+<script>
+(function(){
+  var mic=document.getElementById("micBtn"),listening=null,timer=null;
+  mic.onclick=function(){
+    if(listening){listening.remove();listening=null;clearInterval(timer);return;}
+    listening=document.createElement("div");listening.className="listening";
+    listening.innerHTML='<div class="wave"><i></i><i></i><i></i><i></i><i></i></div>'+
+      '<div class="t"><b>Listening · on-device</b>Your voice never leaves this computer.</div>'+
+      '<button class="stop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button>';
+    document.body.appendChild(listening);
+    listening.querySelector(".stop").onclick=function(){listening.remove();listening=null;clearInterval(timer);};
+    var n=0;timer=setInterval(function(){if(++n>6){listening&&listening.remove();listening=null;clearInterval(timer);}},850);
+  };
+  document.getElementById("photoBtn").onclick=function(){
+    var f=document.getElementById("folderBtn");document.getElementById("stage").scrollTop=f.offsetTop-120;};
+  document.getElementById("groundBtn").onclick=function(){
+    var s=document.createElement("div");s.className="scrim";
+    s.innerHTML='<div class="sheet"><button class="x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+      '<h3>Let\'s take a breath</h3><p>You can stop any time. You are here, and you can go slowly.</p>'+
+      '<div class="breath"><div class="ring"></div><div class="w">breathe</div></div>'+
+      '<p style="font-size:13px">In for four · hold · out for six.</p>'+
+      '<div class="lines"><div class="r"><span>US · Crisis Lifeline</span><span class="n">988</span></div>'+
+      '<div class="r"><span>UK &amp; ROI · Samaritans</span><span class="n">116 123</span></div>'+
+      '<div class="r"><span>Australia · Lifeline</span><span class="n">13 11 14</span></div></div>'+
+      '<p class="soft">A companion for reflection, not an emergency service. If you may be in danger, please reach out.</p>'+
+      '<button class="btn">I\'m okay for now</button></div>';
+    document.body.appendChild(s);
+    function close(){s.remove();}
+    s.onclick=function(e){if(e.target===s)close();};
+    s.querySelector(".x").onclick=close;s.querySelector(".btn").onclick=close;
+  };
+})();
+</script>
