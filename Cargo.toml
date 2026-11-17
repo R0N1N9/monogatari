@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = ["crates/photo_core", "src-tauri"]
+
+[profile.release]
+# Small, fast installers.
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

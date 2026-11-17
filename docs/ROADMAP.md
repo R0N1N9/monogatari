@@ -3,27 +3,30 @@
 A phased plan from empty repo to installable apps. Each phase ends with something you can see and
 react to. We are non-dogmatic about the order inside a phase — we follow what feels most alive.
 
-## Phase 0 — Foundation (we are here)
+## Phase 0 — Foundation ✓
 
 - [x] Vision, principles, and safety stance written down.
-- [ ] Living visual preview of "The Epic" experience (interactive, in-chat) to align on look & feel.
-- [ ] Technical foundation chosen: **Tauri** (small, secure, local-first) + web frontend +
-      **encrypted local SQLite**.
-- [ ] Project scaffold that builds on macOS, Windows, and Linux.
+- [x] Living visual previews; **Candlelight** chosen (Dawn and Nocturne kept for future themes).
+- [x] Technical foundation: **Tauri** (small, secure, local-first) + React/TypeScript interface.
+- [x] Project that builds on macOS, Windows, and Linux, with automated installers via GitHub Actions.
 
-## Phase 1 — The writing canvas
+## Phase 1 — Your photos, self-arranging (we are here)
 
-- [ ] Calm, beautiful long-form writing surface (chapters/entries).
-- [ ] Local, encrypted storage of entries. Autosave. Nothing ever lost.
+- [x] Point at a folder or external drive; read each photo's capture date (EXIF metadata),
+      falling back to the file date and labelling it as a guess.
+- [x] Place photos along the timeline automatically, grouped by year; merge several folders.
+- [x] Photo viewer that walks through time; grounding reachable from everywhere.
+- [ ] Remember chosen folders between launches (needs the encrypted store, Phase 2).
+- [ ] Fast thumbnails for very large libraries, cached locally and encrypted.
+- [ ] HEIC previews on Windows and Linux (macOS already shows them).
+- [ ] Finer chapters: by month, or by natural gaps in time (trips, seasons of life).
+
+## Phase 2 — The writing canvas
+
+- [ ] Calm, beautiful long-form writing surface (chapters attached to points on the timeline).
+- [ ] Local, encrypted storage (SQLCipher). Autosave. Nothing ever lost.
 - [ ] Gentle, trauma-informed prompts that invite without demanding.
-- [ ] Grounding tool + crisis resources reachable from everywhere.
-
-## Phase 2 — Your photos, self-arranging
-
-- [ ] Point at a folder or external drive; read each photo's capture date (EXIF metadata).
-- [ ] Place photos along the timeline automatically, clustered by date.
 - [ ] Weave photos into the written narrative — the illuminated-manuscript effect.
-- [ ] Thumbnails cached locally and encrypted; originals never copied without consent.
 
 ## Phase 3 — Dictation (on-device)
 
@@ -38,8 +41,9 @@ react to. We are non-dogmatic about the order inside a phase — we follow what 
 
 ## Phase 5 — Distribution
 
-- [ ] Automated builds producing real installers (`.dmg`, `.exe`, Linux) via CI.
-- [ ] A simple "download and open" path for non-technical users. No toolchain required.
+- [x] Automated builds producing real installers (`.dmg`, `.exe`, Linux) via CI.
+- [ ] Code signing (Apple and Microsoft) so installers open without warnings.
+- [ ] Tagged releases with a simple download page.
 
 ## Later — 俳句 haiku (Android companion)
 

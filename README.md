@@ -31,8 +31,13 @@ an **illuminated manuscript of your own epic**.
 
 ## Status
 
-Early design. See [`docs/VISION.md`](docs/VISION.md) for the full concept and
-[`docs/ROADMAP.md`](docs/ROADMAP.md) for the phased plan.
+**Working today:** choose a folder or drive, and monogatari arranges your photos along a
+candlelit timeline by the date each was taken. Next: writing chapters, encrypted saving, and
+on-device dictation.
+
+- **Get it on your laptop:** [`docs/RUN.md`](docs/RUN.md)
+- **The full concept:** [`docs/VISION.md`](docs/VISION.md)
+- **The plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 ## For anyone in crisis
 
