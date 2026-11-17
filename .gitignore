@@ -4,8 +4,8 @@ node_modules/
 dist/
 dist-ssr/
 build/
-# Tauri / Rust
-src-tauri/target/
+# Rust build output (any crate)
+target/
 # Logs & local env
 *.log
 .env
