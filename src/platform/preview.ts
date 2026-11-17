@@ -79,6 +79,7 @@ let memory: string | null = JSON.stringify(SAMPLE_STORY);
 
 export const previewPlatform: Platform = {
   kind: "preview",
+  remembersFolders: true,
 
   async pickFolder() {
     return "Example photos";

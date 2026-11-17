@@ -7,6 +7,8 @@ import { CloseIcon, FolderIcon } from "./icons";
 
 interface Props {
   folders: PhotoFolder[];
+  /** False on the website: browsers can't reopen a folder on the next visit. */
+  remembers: boolean;
   photos: PhotoItem[];
   scanning: boolean;
   onAdd: () => void;
@@ -15,7 +17,7 @@ interface Props {
 }
 
 /** The folders monogatari gathers photos from. Forgetting one never touches the photos themselves. */
-export function FoldersSheet({ folders, photos, scanning, onAdd, onForget, onClose }: Props) {
+export function FoldersSheet({ folders, remembers, photos, scanning, onAdd, onForget, onClose }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -29,7 +31,11 @@ export function FoldersSheet({ folders, photos, scanning, onAdd, onForget, onClo
           <CloseIcon />
         </button>
         <h3 id="folders-title">Your photo folders</h3>
-        <p>monogatari remembers these and gathers their photos each time it opens.</p>
+        <p>
+          {remembers
+            ? "monogatari remembers these and gathers their photos each time it opens."
+            : "Your photos are read right here in your browser and never uploaded. Browsers can't reopen folders on your next visit, so you'll choose them again then."}
+        </p>
         {folders.length === 0 ? (
           <p className="soft">No folders yet.</p>
         ) : (

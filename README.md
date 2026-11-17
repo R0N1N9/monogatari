@@ -32,11 +32,13 @@ an **illuminated manuscript of your own epic**.
 
 ## Status
 
-**Working today:** write the chapters of your life on a candlelit timeline, saved encrypted on
-your computer as you go, beside your photos arranged by the date each was taken. Next: saving to
-your own Google Drive, a website version, and on-device dictation.
+**Working today:** write the chapters of your life on a candlelit timeline, beside your photos
+arranged by the date each was taken.
 
-- **Get it on your laptop:** [`docs/RUN.md`](docs/RUN.md)
+- **Desktop app** (Mac, Windows, Linux): everything encrypted on your computer.
+  How to get it: [`docs/RUN.md`](docs/RUN.md)
+- **Website:** sign in with Google and your story is saved to your own Google Drive; or look
+  around with an example story. Setup and publishing: [`docs/WEBSITE.md`](docs/WEBSITE.md)
 - **The full concept:** [`docs/VISION.md`](docs/VISION.md)
 - **The plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md)
 

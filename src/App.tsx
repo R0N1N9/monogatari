@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { AccountSheet, initial } from "./components/AccountSheet";
 import { ChapterEditor } from "./components/ChapterEditor";
 import { FoldersSheet } from "./components/FoldersSheet";
 import { Grounding } from "./components/Grounding";
@@ -7,8 +8,16 @@ import { FolderIcon, InfoIcon, LockIcon, MoonIcon, PenIcon, SunIcon } from "./co
 import { Lightbox } from "./components/Lightbox";
 import { Timeline } from "./components/Timeline";
 import { isInFolder, mergePhotos, photoYear, plural } from "./lib/timeline";
-import { platform, type PhotoItem } from "./platform";
-import { addChapter, addFolder, isBlank, removeChapter, removeFolder, updateChapter } from "./story/model";
+import { usePlatform, type PhotoItem } from "./platform";
+import {
+  addChapter,
+  addFolder,
+  isBlank,
+  removeChapter,
+  removeFolder,
+  updateChapter,
+  type PhotoFolder,
+} from "./story/model";
 import { useStory } from "./story/useStory";
 
 type Theme = "light" | "dark";
@@ -27,7 +36,8 @@ function initialTheme(): Theme {
 const message = (e: unknown) => (typeof e === "string" ? e : e instanceof Error ? e.message : String(e));
 
 export default function App() {
-  const { story, loadError, info, saveState, saveError, change, retry } = useStory();
+  const platform = usePlatform();
+  const { story, loadProblem, retryLoad, info, saveState, saveProblem, change, retry, flush } = useStory();
 
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [view, setView] = useState<View>({ kind: "timeline" });
@@ -37,6 +47,9 @@ export default function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [grounding, setGrounding] = useState(false);
   const [foldersOpen, setFoldersOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  // Folders chosen this visit, where the platform can't remember them (web).
+  const [sessionFolders, setSessionFolders] = useState<PhotoFolder[]>([]);
   const [viewer, setViewer] = useState<{ list: PhotoItem[]; index: number } | null>(null);
   const stage = useRef<HTMLElement>(null);
 
@@ -54,7 +67,7 @@ export default function App() {
   useEffect(() => {
     if (!story || restored.current) return;
     restored.current = true;
-    if (story.folders.length === 0) return;
+    if (!platform.remembersFolders || story.folders.length === 0) return;
     void (async () => {
       setScanning(true);
       const missing: string[] = [];
@@ -74,7 +87,7 @@ export default function App() {
         );
       }
     })();
-  }, [story]);
+  }, [story, platform]);
 
   const chooseFolder = useCallback(async () => {
     setNotice(null);
@@ -98,19 +111,24 @@ export default function App() {
         return;
       }
       setPhotos((prev) => mergePhotos(prev, found));
-      change((s) => addFolder(s, { path: folder!, includeSubfolders }));
+      const chosen = { path: folder, includeSubfolders };
+      if (platform.remembersFolders) change((s) => addFolder(s, chosen));
+      else setSessionFolders((prev) => [...prev.filter((f) => f.path !== chosen.path), chosen]);
       if (skipped > 0) setNotice(`${plural(skipped, "file")} couldn't be read and were left out.`);
     } catch (e) {
       setNotice(message(e));
     } finally {
       setScanning(false);
     }
-  }, [includeSubfolders, change]);
+  }, [includeSubfolders, change, platform]);
+
+  const shownFolders = platform.remembersFolders ? (story?.folders ?? []) : sessionFolders;
 
   const forgetFolder = (path: string) => {
-    const remaining = story?.folders.filter((f) => f.path !== path) ?? [];
+    const remaining = shownFolders.filter((f) => f.path !== path);
     setPhotos((prev) => prev.filter((p) => !isInFolder(p, path) || remaining.some((f) => isInFolder(p, f.path))));
-    change((s) => removeFolder(s, path));
+    if (platform.remembersFolders) change((s) => removeFolder(s, path));
+    else setSessionFolders(remaining);
   };
 
   const writeChapter = (year: number | null) => {
@@ -166,6 +184,11 @@ export default function App() {
             </button>
           </>
         )}
+        {platform.kind === "preview" && platform.signOut && (
+          <button className="btn quiet" onClick={() => platform.signOut?.()}>
+            Leave example
+          </button>
+        )}
         <button className="btn" onClick={() => setGrounding(true)} aria-label="Grounding and support">
           <span className="dot" />
           <span className="label-wide">Grounding</span>
@@ -177,13 +200,22 @@ export default function App() {
         >
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
+        {platform.account && (
+          <button className="avatar" onClick={() => setAccountOpen(true)} aria-label={`Account: ${platform.account.email}`}>
+            {platform.account.picture ? (
+              <img src={platform.account.picture} alt="" referrerPolicy="no-referrer" />
+            ) : (
+              initial(platform.account)
+            )}
+          </button>
+        )}
       </header>
 
       <main className="stage" ref={stage}>
         {platform.kind === "preview" && (
           <p className="preview-note">
             <InfoIcon />
-            Browser preview with example photos and chapters. Nothing here is saved.
+            An example story with example photos. Nothing here is saved.
           </p>
         )}
         {info?.recoveredFromBackup && (
@@ -201,11 +233,21 @@ export default function App() {
           </div>
         )}
 
-        {loadError ? (
+        {loadProblem ? (
           <section className="empty">
             <div className="who">Your story is safe</div>
             <h1>monogatari couldn't open your story</h1>
-            <p>{loadError}</p>
+            <p>{loadProblem.message}</p>
+            <div className="actions">
+              <button className="btn primary" onClick={() => void retryLoad()}>
+                {loadProblem.needsReconnect ? "Reconnect" : "Try again"}
+              </button>
+              {platform.signOut && (
+                <button className="btn quiet" onClick={() => platform.signOut?.()}>
+                  {platform.kind === "web" ? "Sign out" : "Leave"}
+                </button>
+              )}
+            </div>
           </section>
         ) : !story ? (
           <div className="reading" role="status" style={{ marginTop: "20vh" }}>
@@ -217,7 +259,7 @@ export default function App() {
             chapter={editing}
             yearPhotos={editingYearPhotos}
             saveState={saveState}
-            saveError={saveError}
+            saveProblem={saveProblem}
             onChange={(patch) => change((s) => updateChapter(s, editing.id, patch))}
             onBack={() => backToTimeline(editing.id)}
             onDelete={() => {
@@ -239,8 +281,10 @@ export default function App() {
             <p className="privacy-line">
               <LockIcon />
               {info?.keyHome === "preview"
-                ? "In the desktop app, your writing is encrypted on your computer."
-                : info?.keyHome === "file"
+                ? "This is an example. Your own story is saved privately: encrypted on your computer, or in your own Google Drive."
+                : info?.keyHome === "google_drive"
+                  ? "Your story is saved in a private monogatari folder in your own Google Drive. monogatari can't see your other files, and your photos never leave this computer."
+                  : info?.keyHome === "file"
                   ? "Your writing is encrypted on this computer. This system has no keychain, so the key is kept in a private file beside it."
                   : "Your writing is encrypted on this computer, with its key held in your system keychain."}
             </p>
@@ -293,12 +337,24 @@ export default function App() {
       )}
       {foldersOpen && story && (
         <FoldersSheet
-          folders={story.folders}
+          folders={shownFolders}
+          remembers={platform.remembersFolders}
           photos={photos}
           scanning={scanning}
           onAdd={chooseFolder}
           onForget={forgetFolder}
           onClose={() => setFoldersOpen(false)}
+        />
+      )}
+      {accountOpen && platform.account && (
+        <AccountSheet
+          account={platform.account}
+          finishSaving={async () => {
+            await flush();
+            return platform.hasUnsavedWork?.() ?? false;
+          }}
+          onSignOut={(discard) => platform.signOut?.(discard)}
+          onClose={() => setAccountOpen(false)}
         />
       )}
       {grounding && <Grounding onClose={() => setGrounding(false)} />}

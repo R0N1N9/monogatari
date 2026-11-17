@@ -59,8 +59,10 @@ them, and it makes no network connections.
 Copying the folder is a safe backup, but it can only be opened on a computer
 that has the key (cloud saving, coming next, solves moving to a new computer).
 
-Not yet included (coming next): Google Drive saving, the website, dictation,
-and the book export. See [ROADMAP.md](ROADMAP.md).
+There is also a **website** version that saves to your own Google Drive: see
+[WEBSITE.md](WEBSITE.md). The desktop app doesn't sync with it yet; that's
+next. Not yet included: dictation and the book export. See
+[ROADMAP.md](ROADMAP.md).
 
 ## For developers
 
@@ -96,6 +98,13 @@ Test the story model and timeline:
 
 ```bash
 npm test
+```
+
+Drive the real website end to end, in a browser, against a stand-in Google
+Drive (no real account used):
+
+```bash
+npm run test:e2e:web
 ```
 
 Drive the real desktop app end to end (Linux; needs `xvfb`, `webkit2gtk-driver`,

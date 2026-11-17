@@ -4,7 +4,7 @@ import { flushSync } from "react-dom";
 import { monthName, plural } from "../lib/timeline";
 import type { PhotoItem } from "../platform";
 import { wordCount, type Chapter, type ChapterPatch } from "../story/model";
-import type { SaveState } from "../story/useStory";
+import type { SaveProblem, SaveState } from "../story/useStory";
 import { ArrowLeft } from "./icons";
 import { SaveStatus } from "./SaveStatus";
 
@@ -27,7 +27,7 @@ interface Props {
   /** Photos from the chapter's year, to write alongside. */
   yearPhotos: PhotoItem[];
   saveState: SaveState;
-  saveError: string | null;
+  saveProblem: SaveProblem | null;
   onChange: (patch: ChapterPatch) => void;
   onBack: () => void;
   onDelete: () => void;
@@ -36,7 +36,7 @@ interface Props {
 }
 
 export function ChapterEditor(props: Props) {
-  const { chapter, yearPhotos, saveState, saveError, onChange, onBack, onDelete, onRetry, onOpenPhoto } = props;
+  const { chapter, yearPhotos, saveState, saveProblem, onChange, onBack, onDelete, onRetry, onOpenPhoto } = props;
   const titleRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -74,7 +74,7 @@ export function ChapterEditor(props: Props) {
         <button className="btn quiet" onClick={onBack}>
           <ArrowLeft /> Back to your timeline
         </button>
-        <SaveStatus state={saveState} error={saveError} onRetry={onRetry} />
+        <SaveStatus state={saveState} problem={saveProblem} onRetry={onRetry} />
       </div>
 
       <div className="when-row">

@@ -27,14 +27,29 @@ export interface PhotoFolder {
   includeSubfolders: boolean;
 }
 
+/**
+ * A record that a chapter was deleted, so another device's older copy of it
+ * isn't brought back when stories are merged.
+ */
+export interface Removal {
+  id: string;
+  /** Unix milliseconds. */
+  at: number;
+}
+
 export interface Story {
   version: typeof STORY_VERSION;
   chapters: Chapter[];
+  /**
+   * Photo folders on *this* device. Paths only mean something on the computer
+   * that chose them, so merging always keeps the local list.
+   */
   folders: PhotoFolder[];
+  removed: Removal[];
 }
 
 export function emptyStory(): Story {
-  return { version: STORY_VERSION, chapters: [], folders: [] };
+  return { version: STORY_VERSION, chapters: [], folders: [], removed: [] };
 }
 
 export class StoryFormatError extends Error {}
@@ -84,7 +99,12 @@ export function parseStory(json: string | null): Story {
     }
   }
 
-  return { version: STORY_VERSION, chapters, folders };
+  const removed: Removal[] = [];
+  for (const r of Array.isArray(raw.removed) ? raw.removed : []) {
+    if (isObj(r) && typeof r.id === "string" && typeof r.at === "number") removed.push({ id: r.id, at: r.at });
+  }
+
+  return { version: STORY_VERSION, chapters, folders, removed };
 }
 
 export function serializeStory(story: Story): string {
@@ -129,8 +149,55 @@ export function updateChapter(story: Story, id: string, patch: ChapterPatch, now
   };
 }
 
-export function removeChapter(story: Story, id: string): Story {
-  return { ...story, chapters: story.chapters.filter((c) => c.id !== id) };
+export function removeChapter(story: Story, id: string, now = Date.now()): Story {
+  return {
+    ...story,
+    chapters: story.chapters.filter((c) => c.id !== id),
+    removed: [...story.removed.filter((r) => r.id !== id), { id, at: now }],
+  };
+}
+
+/**
+ * Combine two copies of the same story (e.g. this device's and the one in
+ * Google Drive) without losing anyone's writing:
+ * - every chapter from either side is kept;
+ * - where both changed the same chapter, the more recent edit wins;
+ * - a chapter deleted on one side stays deleted, unless it was edited on the
+ *   other side *after* it was deleted;
+ * - photo folders always come from `local` (they are per-device).
+ */
+export function mergeStories(local: Story, remote: Story): Story {
+  const removedAt = new Map<string, number>();
+  for (const r of [...remote.removed, ...local.removed]) {
+    removedAt.set(r.id, Math.max(removedAt.get(r.id) ?? 0, r.at));
+  }
+
+  const byId = new Map<string, Chapter>();
+  for (const c of remote.chapters) byId.set(c.id, c);
+  for (const c of local.chapters) {
+    const other = byId.get(c.id);
+    if (!other || c.updatedAt >= other.updatedAt) byId.set(c.id, c); // ties favour this device
+  }
+
+  const chapters = [...byId.values()].filter((c) => {
+    const at = removedAt.get(c.id);
+    return at === undefined || c.updatedAt > at;
+  });
+  const kept = new Set(chapters.map((c) => c.id));
+  const removed = [...removedAt.entries()]
+    .filter(([id]) => !kept.has(id))
+    .map(([id, at]) => ({ id, at }));
+
+  return { version: STORY_VERSION, chapters, folders: local.folders, removed };
+}
+
+/** True if two stories hold the same writing (ignores order). */
+export function sameWriting(a: Story, b: Story): boolean {
+  if (a.chapters.length !== b.chapters.length || a.removed.length !== b.removed.length) return false;
+  const key = (c: Chapter) => `${c.id}|${c.updatedAt}`;
+  const bs = new Set(b.chapters.map(key));
+  const br = new Set(b.removed.map((r) => `${r.id}|${r.at}`));
+  return a.chapters.every((c) => bs.has(key(c))) && a.removed.every((r) => br.has(`${r.id}|${r.at}`));
 }
 
 export function isBlank(chapter: Chapter): boolean {

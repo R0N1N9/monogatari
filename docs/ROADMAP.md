@@ -31,18 +31,18 @@ react to. We are non-dogmatic about the order inside a phase — we follow what 
 - [ ] Place individual photos inside a chapter — the illuminated-manuscript effect.
 - [ ] Read view: the epic as a book.
 
-## Phase 2b — Cloud saving to your own Google Drive
+## Phase 2b — The website, saving to your own Google Drive
 
-- [ ] Sign in with Google (optional; the app works fully without it).
-- [ ] Save the story to the hidden app folder in the person's own Drive; restore on a new device.
-- [ ] Merge edits made on different devices without losing either.
+- [x] The same interface as a static site (no server of our own), published to GitHub Pages.
+- [x] Sign in with Google; the story is saved to the hidden app folder in the person's own Drive
+      (non-sensitive `drive.appdata` permission only) and restored on any visit.
+- [x] Edits from different devices and tabs merge without losing either; deletions stay deleted.
+- [x] Session expiry, going offline, and closing the tab never lose words.
+- [x] Photos read inside the browser, never uploaded.
+- [x] An example story to look around without signing in.
+- [ ] Desktop app: optional Google sign-in to sync with the website (same Drive file, same merge).
 - [ ] Optional small thumbnails so the timeline looks right everywhere; originals stay put.
-
-## Phase 2c — The website
-
-- [ ] The same interface, served as a static site (no server of our own).
-- [ ] Read a chosen folder's photos inside the browser; nothing uploaded.
-- [ ] Google sign-in and Drive saving shared with the desktop app.
+- [ ] Chrome/Edge: remember photo folders between visits (with the browser's permission).
 
 ## Phase 3 — Dictation (on-device)
 

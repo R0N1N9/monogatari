@@ -20,6 +20,7 @@ interface RawScan {
 
 export const desktopPlatform: Platform = {
   kind: "desktop",
+  remembersFolders: true,
 
   async pickFolder() {
     const chosen = await open({
@@ -54,6 +55,7 @@ export const desktopPlatform: Platform = {
   },
 
   onClose(beforeClose) {
+    // The desktop app can wait for the final save, so no snapshot is needed.
     // Tauri waits for this handler, then closes the window.
     void getCurrentWindow().onCloseRequested(async () => {
       try {
