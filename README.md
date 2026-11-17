@@ -21,8 +21,9 @@ an **illuminated manuscript of your own epic**.
 
 ## What it stands for
 
-- **Your story is yours.** Everything stays on your own computer, encrypted. No accounts, no
-  cloud, no telemetry, nothing leaves your laptop unless *you* choose to export it.
+- **Your story is yours.** Everything is stored on your own computer, encrypted. No telemetry.
+  Nothing leaves your laptop unless *you* choose to — and if you turn on cloud saving, it goes to
+  your own Google Drive, never to a server of ours.
 - **Beautiful by default.** The writing is the centerpiece and it should feel like craft, not
   data entry.
 - **Healing by design.** Trauma-informed throughout: you set the pace, nothing is forced,
@@ -31,9 +32,9 @@ an **illuminated manuscript of your own epic**.
 
 ## Status
 
-**Working today:** choose a folder or drive, and monogatari arranges your photos along a
-candlelit timeline by the date each was taken. Next: writing chapters, encrypted saving, and
-on-device dictation.
+**Working today:** write the chapters of your life on a candlelit timeline, saved encrypted on
+your computer as you go, beside your photos arranged by the date each was taken. Next: saving to
+your own Google Drive, a website version, and on-device dictation.
 
 - **Get it on your laptop:** [`docs/RUN.md`](docs/RUN.md)
 - **The full concept:** [`docs/VISION.md`](docs/VISION.md)

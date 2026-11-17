@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 
+import { buildStations, monthName, monthSpan, plural } from "../lib/timeline";
 import type { PhotoItem } from "../platform";
-import { groupByYear, monthSpan, plural } from "../lib/timeline";
+import { excerpt, wordCount, type Chapter } from "../story/model";
+import { PenIcon } from "./icons";
 import { PhotoTile } from "./PhotoTile";
 
 /** How many photos a year shows before offering "Show all". Keeps huge libraries fast. */
@@ -9,19 +11,28 @@ const PREVIEW_COUNT = 24;
 
 interface Props {
   photos: PhotoItem[];
-  onOpen: (photo: PhotoItem) => void;
+  chapters: Chapter[];
+  onOpenPhoto: (photo: PhotoItem) => void;
+  onOpenChapter: (id: string) => void;
+  onWrite: (year: number | null) => void;
 }
 
-/** The epic's spine: one candlelit station per year, its photos gathered around it. */
-export function Timeline({ photos, onOpen }: Props) {
-  const { years, undated } = useMemo(() => groupByYear(photos), [photos]);
-  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+/** The epic's spine: one candlelit station per year, its chapters and photos gathered around it. */
+export function Timeline({ photos, chapters, onOpenPhoto, onOpenChapter, onWrite }: Props) {
+  const stations = useMemo(() => buildStations(photos, chapters), [photos, chapters]);
+  const [expanded, setExpanded] = useState<Set<number | null>>(new Set());
 
-  const first = years[0]?.year;
-  const last = years[years.length - 1]?.year;
+  const years = stations.flatMap((s) => (s.year === null ? [] : [s.year]));
+  const first = years[0];
+  const last = years[years.length - 1];
   const span = first === undefined ? "" : first === last ? `${first}` : `${first} – ${last}`;
 
-  const toggle = (year: number) =>
+  const counts = [
+    chapters.length > 0 ? plural(chapters.length, "chapter") : null,
+    photos.length > 0 ? plural(photos.length, "photo") : null,
+  ].filter(Boolean);
+
+  const toggle = (year: number | null) =>
     setExpanded((prev) => {
       const next = new Set(prev);
       if (next.has(year)) next.delete(year);
@@ -33,48 +44,71 @@ export function Timeline({ photos, onOpen }: Props) {
     <section className="view" aria-label="Timeline">
       <header className="epic-head">
         <div className="who">Your timeline</div>
-        <h1>{span ? `${span}, in the order it happened` : "Your photos"}</h1>
+        <h1>{span ? `${span}, in the order it happened` : "Your story"}</h1>
         <p className="arc">
-          {plural(photos.length, "photo")} across {plural(years.length, "year")}, each placed by the day it was taken.
+          {counts.join(" and ")}
+          {years.length > 0 && ` across ${plural(years.length, "year")}`}.
         </p>
       </header>
 
       <div className="spine">
-        {years.map(({ year, photos: yearPhotos }) => {
+        {stations.map(({ year, chapters: yearChapters, photos: yearPhotos }) => {
           const open = expanded.has(year);
           const shown = open ? yearPhotos : yearPhotos.slice(0, PREVIEW_COUNT);
+          const id = `y-${year ?? "undated"}`;
           return (
-            <article className="station" key={year} aria-labelledby={`y-${year}`}>
-              <h2 id={`y-${year}`}>{year}</h2>
-              <div className="when">
-                {plural(yearPhotos.length, "photo")} · {monthSpan(yearPhotos)}
-              </div>
-              <div className="grid">
-                {shown.map((p) => (
-                  <PhotoTile key={p.id} photo={p} onOpen={() => onOpen(p)} />
-                ))}
-              </div>
+            <article className={`station${year === null ? " undated" : ""}`} key={id} aria-labelledby={id}>
+              <h2 id={id}>{year ?? "No particular time"}</h2>
+              {yearPhotos.length > 0 && (
+                <div className="when">
+                  {plural(yearPhotos.length, "photo")}
+                  {year !== null && ` · ${monthSpan(yearPhotos)}`}
+                </div>
+              )}
+
+              {yearChapters.map((c) => (
+                <ChapterCard key={c.id} chapter={c} onOpen={() => onOpenChapter(c.id)} />
+              ))}
+
+              <button className="btn quiet write-here" onClick={() => onWrite(year)}>
+                <PenIcon />
+                {yearChapters.length === 0
+                  ? year === null
+                    ? "Write a chapter"
+                    : `Write about ${year}`
+                  : `Another chapter${year === null ? "" : ` for ${year}`}`}
+              </button>
+
+              {yearPhotos.length > 0 && (
+                <div className="grid">
+                  {shown.map((p) => (
+                    <PhotoTile key={p.id} photo={p} onOpen={() => onOpenPhoto(p)} />
+                  ))}
+                </div>
+              )}
               {yearPhotos.length > PREVIEW_COUNT && (
                 <button className="btn more" onClick={() => toggle(year)}>
-                  {open ? `Show fewer from ${year}` : `Show all ${yearPhotos.length.toLocaleString()} from ${year}`}
+                  {open
+                    ? "Show fewer"
+                    : `Show all ${yearPhotos.length.toLocaleString()}${year === null ? "" : ` from ${year}`}`}
                 </button>
               )}
             </article>
           );
         })}
-
-        {undated.length > 0 && (
-          <article className="station undated" aria-labelledby="y-undated">
-            <h2 id="y-undated">Undated</h2>
-            <div className="when">{plural(undated.length, "photo")} we couldn't place</div>
-            <div className="grid">
-              {undated.map((p) => (
-                <PhotoTile key={p.id} photo={p} onOpen={() => onOpen(p)} />
-              ))}
-            </div>
-          </article>
-        )}
       </div>
     </section>
+  );
+}
+
+function ChapterCard({ chapter, onOpen }: { chapter: Chapter; onOpen: () => void }) {
+  const words = wordCount(chapter.body);
+  return (
+    <button className="chapter-card" onClick={onOpen}>
+      {chapter.month !== null && <span className="chapter-when">{monthName(chapter.month)}</span>}
+      <span className="chapter-title">{chapter.title.trim() || "Untitled chapter"}</span>
+      {chapter.body.trim() && <span className="chapter-excerpt">{excerpt(chapter.body)}</span>}
+      <span className="chapter-meta">{words > 0 ? `${plural(words, "word")} · Continue` : "Begin writing"}</span>
+    </button>
   );
 }

@@ -6,4 +6,4 @@ import type { Platform } from "./types";
 const insideDesktopApp = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
 export const platform: Platform = insideDesktopApp ? desktopPlatform : previewPlatform;
-export type { DateSource, PhotoItem, Platform, ScanOutcome } from "./types";
+export type { DateSource, KeyHome, LoadedStory, PhotoItem, Platform, ScanOutcome } from "./types";

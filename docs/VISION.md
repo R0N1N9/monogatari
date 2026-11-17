@@ -64,16 +64,32 @@ The first thing we make excellent is the **narrative core**:
 
 ## Design principles
 
-1. **Privacy is absolute.** Everything stays on your own computer, encrypted at rest. No accounts,
-   no cloud, no telemetry. Nothing leaves your laptop unless *you* export it. Even dictation runs
-   locally.
-2. **Beautiful by default.** The writing and the reading are the point. It should feel like an
+1. **Private by default.** Everything is stored on your own computer, encrypted at rest. No
+   telemetry, ever. Nothing leaves your laptop unless *you* choose to export it or turn on cloud
+   saving. Even dictation runs locally.
+2. **Cloud saving is optional and goes to *your own* Google Drive.** Sign in with Google and your
+   story is saved to a hidden folder in your own Drive that only monogatari can open. We run no
+   servers and hold no one's data. This is also how monogatari, haiku, and the website stay in
+   sync. (Decided: protected by Google sign-in rather than a separate passphrase, for simplicity.
+   An optional extra passphrase lock can be added later without a redesign.)
+3. **Beautiful by default.** The writing and the reading are the point. It should feel like an
    illuminated manuscript of your own life.
-3. **Healing by design — trauma-informed.** You set the pace. Nothing is ever forced or
+4. **Healing by design — trauma-informed.** You set the pace. Nothing is ever forced or
    streak-shamed. You can step back at any time. Grounding tools and crisis resources are always
    one click away. Difficult material can be approached gently and in small pieces.
-4. **Gentle, never coercive.** No guilt-trip streaks, no dark patterns, no gamified pressure.
-5. **Runs everywhere, installs small.** One fast, lightweight install per platform.
+5. **Gentle, never coercive.** No guilt-trip streaks, no dark patterns, no gamified pressure.
+6. **Runs everywhere, installs small.** One fast, lightweight install per platform — plus a
+   website, so your story is reachable from any computer.
+
+## Three ways in, one story
+
+| | Desktop **monogatari** | **Website** | **haiku** (Android) |
+|---|---|---|---|
+| Best for | The full epic; whole drives of photos; the book | Reaching your story from any computer | Capturing moments on the go |
+| Photos | Reads folders and whole drives directly | Reads a folder you pick, inside the browser | Camera and phone gallery |
+| Saving | Encrypted on the laptop, optional Google Drive | Google Drive | Google Drive |
+
+All three share one story format and meet in the person's own Google Drive.
 
 ## Trauma-informed commitments
 

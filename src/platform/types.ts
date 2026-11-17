@@ -1,9 +1,10 @@
 /**
  * The interface talks to the computer only through this contract.
  *
- * In the desktop app it is fulfilled by Tauri and the Rust photo engine. In a
- * plain browser (for design previews) it is fulfilled by example photos, so the
- * same interface can be shown without a desktop build.
+ * In the desktop app it is fulfilled by Tauri and the Rust engines. In a plain
+ * browser (for design previews) it is fulfilled by example data, so the same
+ * interface can be shown without a desktop build. The website will fulfil it
+ * with in-browser photo reading and Google Drive saving.
  */
 
 /** Where a photo's timeline date came from (mirrors `photo_core::DateSource`). */
@@ -33,6 +34,19 @@ export interface ScanOutcome {
   skipped: number;
 }
 
+/** Where the story's encryption key is held. */
+export type KeyHome = "keychain" | "file" | "preview";
+
+export interface LoadedStory {
+  /** The saved story document (JSON), or null if nothing has been saved yet. */
+  data: string | null;
+  /** True if the main file was damaged and a backup was used. */
+  recoveredFromBackup: boolean;
+  keyHome: KeyHome;
+  /** Where the story is kept on this computer. */
+  location: string;
+}
+
 export interface Platform {
   /** "desktop" when running inside the real app, "preview" in a browser. */
   kind: "desktop" | "preview";
@@ -40,4 +54,10 @@ export interface Platform {
   pickFolder(): Promise<string | null>;
   /** Read every photo in a folder and its capture date. Read-only. */
   scanFolder(path: string, recursive: boolean): Promise<ScanOutcome>;
+  /** Open the saved story. Rejects with a readable message if it can't. */
+  loadStory(): Promise<LoadedStory>;
+  /** Save the whole story document. */
+  saveStory(data: string): Promise<void>;
+  /** Run `beforeClose` (e.g. a final save) before the window closes. */
+  onClose(beforeClose: () => Promise<void>): void;
 }

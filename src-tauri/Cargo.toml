@@ -19,3 +19,5 @@ tauri-plugin-dialog = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 photo_core = { path = "../crates/photo_core" }
+vault_core = { path = "../crates/vault_core" }
+keyring = "4"

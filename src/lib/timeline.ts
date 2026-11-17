@@ -1,4 +1,5 @@
 import type { PhotoItem } from "../platform";
+import { compareChapters, type Chapter } from "../story/model";
 
 /** Merge newly scanned photos into the collection, de-duplicated by path and sorted oldest-first. */
 export function mergePhotos(existing: PhotoItem[], incoming: PhotoItem[]): PhotoItem[] {
@@ -17,31 +18,53 @@ export function compareByCaptureTime(a: PhotoItem, b: PhotoItem): number {
   return a.path.localeCompare(b.path);
 }
 
-export interface YearSection {
-  year: number;
+/** Calendar year a photo belongs to (camera wall-clock time, stored as UTC). */
+export function photoYear(photo: PhotoItem): number | null {
+  return photo.takenAt === null ? null : new Date(photo.takenAt * 1000).getUTCFullYear();
+}
+
+/** Photos that sit under the folder `root` (or are it). */
+export function isInFolder(photo: PhotoItem, root: string): boolean {
+  const sep = root.includes("\\") ? "\\" : "/";
+  const prefix = root.endsWith(sep) ? root : root + sep;
+  return photo.path.startsWith(prefix);
+}
+
+/** One station on the story spine: a year (or "undated") with its chapters and photos. */
+export interface Station {
+  year: number | null;
+  chapters: Chapter[];
   photos: PhotoItem[];
 }
 
-/** Split a sorted collection into calendar years, plus a tray of photos with no date. */
-export function groupByYear(photos: PhotoItem[]): { years: YearSection[]; undated: PhotoItem[] } {
-  const years: YearSection[] = [];
-  const undated: PhotoItem[] = [];
-  for (const photo of photos) {
-    if (photo.takenAt === null) {
-      undated.push(photo);
-      continue;
+/**
+ * Build the spine from photos and chapters together, oldest first, with an
+ * "undated" station last if anything has no date. A year appears if it has
+ * either photos or writing.
+ */
+export function buildStations(photos: PhotoItem[], chapters: Chapter[]): Station[] {
+  const byYear = new Map<number | null, Station>();
+  const station = (year: number | null) => {
+    let s = byYear.get(year);
+    if (!s) {
+      s = { year, chapters: [], photos: [] };
+      byYear.set(year, s);
     }
-    const year = new Date(photo.takenAt * 1000).getUTCFullYear();
-    const last = years[years.length - 1];
-    if (last && last.year === year) last.photos.push(photo);
-    else years.push({ year, photos: [photo] });
-  }
-  return { years, undated };
+    return s;
+  };
+  for (const p of photos) station(photoYear(p)).photos.push(p);
+  for (const c of [...chapters].sort(compareChapters)) station(c.year).chapters.push(c);
+  return [...byYear.values()].sort((a, b) => {
+    if (a.year === null) return 1;
+    if (b.year === null) return -1;
+    return a.year - b.year;
+  });
 }
 
 // Capture times are the camera's wall clock stored as UTC, so format in UTC.
 const dayFmt = new Intl.DateTimeFormat(undefined, { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" });
 const monthFmt = new Intl.DateTimeFormat(undefined, { timeZone: "UTC", month: "short" });
+const monthLongFmt = new Intl.DateTimeFormat(undefined, { timeZone: "UTC", month: "long" });
 const fullFmt = new Intl.DateTimeFormat(undefined, {
   timeZone: "UTC",
   weekday: "long",
@@ -55,6 +78,8 @@ const fullFmt = new Intl.DateTimeFormat(undefined, {
 export const formatDay = (ts: number) => dayFmt.format(ts * 1000);
 export const formatMonth = (ts: number) => monthFmt.format(ts * 1000);
 export const formatFull = (ts: number) => fullFmt.format(ts * 1000);
+/** "September" for month 9. */
+export const monthName = (month: number) => monthLongFmt.format(Date.UTC(2000, month - 1, 15));
 
 /** "May – Aug" for a year's photos, or a single month. */
 export function monthSpan(photos: PhotoItem[]): string {

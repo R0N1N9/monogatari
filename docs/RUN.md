@@ -30,18 +30,36 @@ planned before any public release.
 
 ## What works in this version
 
+- **Write chapters of your life**, each placed at a year (and month, if you
+  like) on your timeline, beside that year's photos. Gentle prompts are there
+  if you want a place to begin.
+- **Saved automatically and encrypted** on your computer as you write. The key
+  is kept in your system keychain (macOS Keychain, Windows Credential Manager,
+  or the Linux keyring). Earlier versions are kept as backups, and a damaged
+  file is recovered from the newest backup.
 - **Choose a folder or a whole drive.** monogatari reads the date each photo was
-  taken and lays them along your timeline, year by year.
-- **Add more folders** — they merge into one timeline, in order.
+  taken and lays them along your timeline, year by year. It **remembers your
+  folders** and gathers their photos each time it opens.
 - **Open any photo** to see the exact moment it was taken. Walk through time
   with ← and →.
-- **Grounding** is always in the top bar.
-- **Light and dark** modes.
+- **Grounding** is always in the top bar. **Light and dark** modes.
 
 Your photos are only read. monogatari never moves, changes, copies, or uploads
 them, and it makes no network connections.
 
-Not yet included (coming next): writing chapters, encrypted saving, dictation,
+### Where your story is kept
+
+| System | Folder |
+|---|---|
+| macOS | `~/Library/Application Support/app.monogatari.desktop/` |
+| Windows | `%APPDATA%\app.monogatari.desktop\` |
+| Linux | `~/.local/share/app.monogatari.desktop/` |
+
+`story.vault` is your encrypted story; `story.vault.1` … `.5` are backups.
+Copying the folder is a safe backup, but it can only be opened on a computer
+that has the key (cloud saving, coming next, solves moving to a new computer).
+
+Not yet included (coming next): Google Drive saving, the website, dictation,
 and the book export. See [ROADMAP.md](ROADMAP.md).
 
 ## For developers
@@ -68,10 +86,28 @@ Run only the interface in a browser, using example photos:
 npm run dev
 ```
 
-Test the photo engine:
+Test the photo engine and encrypted storage:
 
 ```bash
-cargo test -p photo_core
+cargo test -p photo_core -p vault_core
+```
+
+Test the story model and timeline:
+
+```bash
+npm test
+```
+
+Drive the real desktop app end to end (Linux; needs `xvfb`, `webkit2gtk-driver`,
+and `cargo install tauri-driver`). It uses a temporary data folder, never your
+real story:
+
+```bash
+npx tauri build --no-bundle
+```
+
+```bash
+npm run test:e2e
 ```
 
 Build an installer for the current machine:
@@ -85,8 +121,11 @@ npx tauri build
 | Path | What it is |
 |---|---|
 | `crates/photo_core/` | The photo engine: scans folders, reads EXIF capture dates, orders and groups photos. No UI, fully tested. |
-| `src-tauri/` | The thin native shell. Exposes the engine to the interface and grants access only to folders you choose. |
+| `crates/vault_core/` | Encrypted, crash-safe story storage with rolling backups and damage recovery. Fully tested. |
+| `src-tauri/` | The thin native shell. Exposes the engines, keeps the key in the system keychain, and grants access only to folders you choose. |
 | `src/` | The interface (React + TypeScript), in the Candlelight design. |
+| `src/story/` | The story model (chapters, folders), shared with the future website and haiku. |
 | `src/platform/` | The only place the interface touches the computer. A browser preview stands in when not running as the desktop app. |
+| `e2e/` | Drives the real desktop app: write, restart, verify. |
 | `design/` | Interactive design previews (Candlelight, Dawn, Nocturne). |
 | `scripts/` | Generators for test photos and the app icon. |

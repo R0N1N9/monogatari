@@ -1,8 +1,10 @@
 import type { DateSource, PhotoItem, Platform } from "./types";
 
 /**
- * Example photos for browser previews of the interface. These are drawn
- * gradients, not anyone's real pictures. The desktop app never uses them.
+ * Example data for browser previews of the interface. The photos are drawn
+ * gradients and the chapters are a fictional person's, not anyone's real story.
+ * Nothing is saved: the "story" lives in memory for the length of the visit.
+ * The desktop app never uses any of this.
  */
 
 const PALETTES: Record<string, [string, string, string]> = {
@@ -46,6 +48,35 @@ const SAMPLES: Sample[] = [
   ["IMG_0533.jpg", at(2023, 9, 30, 18, 5), "exif", "dusk", 1600, 1200],
 ];
 
+const SAMPLE_STORY = {
+  version: 1,
+  folders: [{ path: "Example photos", includeSubfolders: true }],
+  chapters: [
+    {
+      id: "example-1",
+      title: "The House on Alder Street",
+      body:
+        "The kitchen was always warm and always loud. I remember the light more than anything — late afternoon coming sideways through the window over the sink, turning the dust into something like snow. My grandmother hummed while she worked. I did not know yet that a childhood could be a place you carry, not just a time you leave.",
+      year: 1996,
+      month: 5,
+      createdAt: Date.UTC(2026, 10, 1),
+      updatedAt: Date.UTC(2026, 10, 1),
+    },
+    {
+      id: "example-2",
+      title: "Leaving",
+      body:
+        "I packed the car in the dark so no one would see me cry. For a long time I told this as a story about escape. Writing it now, I can see it was also a story about grief — that you can need to go and still lose something real in the going. Both things were true. I am allowed to hold both.",
+      year: 2011,
+      month: 9,
+      createdAt: Date.UTC(2026, 10, 2),
+      updatedAt: Date.UTC(2026, 10, 2),
+    },
+  ],
+};
+
+let memory: string | null = JSON.stringify(SAMPLE_STORY);
+
 export const previewPlatform: Platform = {
   kind: "preview",
 
@@ -55,11 +86,23 @@ export const previewPlatform: Platform = {
 
   async scanFolder(path) {
     // A short pause so the "reading dates" state is visible, as on a real disk.
-    await new Promise((r) => setTimeout(r, 900));
+    await new Promise((r) => setTimeout(r, 700));
     const photos: PhotoItem[] = SAMPLES.map(([name, takenAt, dateSource, pal, w, h]) => {
       const p = `${path}/${name}`;
       return { id: p, path: p, fileName: name, takenAt, dateSource, width: w, height: h, src: swatch(pal, w / 8, h / 8) };
     });
     return { photos, skipped: 0 };
+  },
+
+  async loadStory() {
+    return { data: memory, recoveredFromBackup: false, keyHome: "preview", location: "this browser tab (not saved)" };
+  },
+
+  async saveStory(data) {
+    memory = data;
+  },
+
+  onClose() {
+    /* nothing to flush: the preview keeps the story in memory only */
   },
 };

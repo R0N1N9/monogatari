@@ -1,7 +1,8 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open } from "@tauri-apps/plugin-dialog";
 
-import type { DateSource, Platform, ScanOutcome } from "./types";
+import type { DateSource, LoadedStory, Platform, ScanOutcome } from "./types";
 
 /** The shape `photo_core::ScanResult` serializes to. */
 interface RawPhoto {
@@ -44,5 +45,22 @@ export const desktopPlatform: Platform = {
         src: convertFileSrc(p.path),
       })),
     };
+  },
+
+  loadStory: () => invoke<LoadedStory>("load_story"),
+
+  async saveStory(data) {
+    await invoke("save_story", { data });
+  },
+
+  onClose(beforeClose) {
+    // Tauri waits for this handler, then closes the window.
+    void getCurrentWindow().onCloseRequested(async () => {
+      try {
+        await beforeClose();
+      } catch {
+        /* never trap the person in the app because a save failed */
+      }
+    });
   },
 };

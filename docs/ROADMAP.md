@@ -16,17 +16,33 @@ react to. We are non-dogmatic about the order inside a phase — we follow what 
       falling back to the file date and labelling it as a guess.
 - [x] Place photos along the timeline automatically, grouped by year; merge several folders.
 - [x] Photo viewer that walks through time; grounding reachable from everywhere.
-- [ ] Remember chosen folders between launches (needs the encrypted store, Phase 2).
+- [x] Remember chosen folders between launches.
 - [ ] Fast thumbnails for very large libraries, cached locally and encrypted.
 - [ ] HEIC previews on Windows and Linux (macOS already shows them).
 - [ ] Finer chapters: by month, or by natural gaps in time (trips, seasons of life).
 
 ## Phase 2 — The writing canvas
 
-- [ ] Calm, beautiful long-form writing surface (chapters attached to points on the timeline).
-- [ ] Local, encrypted storage (SQLCipher). Autosave. Nothing ever lost.
-- [ ] Gentle, trauma-informed prompts that invite without demanding.
-- [ ] Weave photos into the written narrative — the illuminated-manuscript effect.
+- [x] Calm long-form writing surface; chapters placed at a year and month on the timeline.
+- [x] Local, encrypted storage with the key kept in the system keychain. Autosave and rolling
+      backups; damaged files recover from a backup. Verified end to end in the real app.
+- [x] Gentle, trauma-informed prompts that invite without demanding.
+- [x] A chapter shows that year's photos as you write.
+- [ ] Place individual photos inside a chapter — the illuminated-manuscript effect.
+- [ ] Read view: the epic as a book.
+
+## Phase 2b — Cloud saving to your own Google Drive
+
+- [ ] Sign in with Google (optional; the app works fully without it).
+- [ ] Save the story to the hidden app folder in the person's own Drive; restore on a new device.
+- [ ] Merge edits made on different devices without losing either.
+- [ ] Optional small thumbnails so the timeline looks right everywhere; originals stay put.
+
+## Phase 2c — The website
+
+- [ ] The same interface, served as a static site (no server of our own).
+- [ ] Read a chosen folder's photos inside the browser; nothing uploaded.
+- [ ] Google sign-in and Drive saving shared with the desktop app.
 
 ## Phase 3 — Dictation (on-device)
 

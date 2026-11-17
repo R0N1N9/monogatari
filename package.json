@@ -9,7 +9,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test:core": "cargo test -p photo_core"
+    "test:core": "cargo test -p photo_core -p vault_core",
+    "test": "vitest run",
+    "test:e2e": "bash e2e/run-desktop.sh"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -26,6 +28,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
   }
 }
