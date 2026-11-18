@@ -18,11 +18,9 @@ if (insideDesktopApp) {
       </PlatformProvider>
     )
   );
-} else if (import.meta.env.MODE === "web") {
-  // The website: Google sign-in and Drive saving, or an example story.
-  void import("./web/WebRoot").then(({ WebRoot }) => render(<WebRoot />));
 } else {
   // `npm run dev` in a browser: the interface with example data.
+  // (The website version is sutori: github.com/R0N1N9/sutori)
   render(
     <PlatformProvider platform={previewPlatform}>
       <App />

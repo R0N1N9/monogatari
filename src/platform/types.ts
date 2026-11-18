@@ -1,18 +1,18 @@
 /**
- * The interface talks to the computer (or the browser and the cloud) only
- * through this contract.
+ * The interface talks to the computer only through this contract.
  *
  * - desktop: Tauri and the Rust engines; the story is encrypted on disk.
- * - web: photos read inside the browser; the story saved to the person's own
- *   Google Drive.
- * - preview: example data in memory, for trying the app without signing in.
+ * - preview: example data in memory, for `npm run dev` in a browser.
+ *
+ * The website version, sutori (github.com/R0N1N9/sutori), shares this
+ * contract and the story format, and adds Google Drive saving.
  */
 
 /** Where a photo's timeline date came from (mirrors `photo_core::DateSource`). */
 export type DateSource = "exif" | "file_modified" | "unknown";
 
 export interface PhotoItem {
-  /** Stable identity: the path on disk (desktop) or within the chosen folder (web). */
+  /** Stable identity: the path on disk. */
   id: string;
   path: string;
   fileName: string;
@@ -36,7 +36,7 @@ export interface ScanOutcome {
 }
 
 /** Where the story is kept and how it's protected. */
-export type KeyHome = "keychain" | "file" | "google_drive" | "preview";
+export type KeyHome = "keychain" | "file" | "preview";
 
 export interface LoadedStory {
   /** The saved story document (JSON), or null if nothing has been saved yet. */
@@ -54,16 +54,16 @@ export interface Account {
   picture?: string;
 }
 
-/** Saving needs the person to reconnect (e.g. their Google session expired). */
+/** Saving needs the person to reconnect (e.g. a cloud session expired). */
 export class ReconnectNeeded extends Error {
-  constructor(message = "Your Google session paused. Reconnect to keep saving — your words are kept in this browser until then.") {
+  constructor(message = "Cloud saving paused. Reconnect to keep saving; your words are safe meanwhile.") {
     super(message);
     this.name = "ReconnectNeeded";
   }
 }
 
 export interface Platform {
-  kind: "desktop" | "web" | "preview";
+  kind: "desktop" | "preview";
   /** Whether chosen photo folders can be remembered and re-opened next time. */
   remembersFolders: boolean;
   /** Ask the person to choose a folder. Resolves `null` if they cancel. */
@@ -83,12 +83,12 @@ export interface Platform {
    * synchronously, or null) where it can't.
    */
   onClose(beforeClose: () => Promise<void>, snapshot: () => string | null): void;
-  /** Must be called directly from a click: re-authorise saving (web). */
+  /** Must be called directly from a click: re-authorise cloud saving (planned Google Drive sync). */
   reconnect?(): Promise<void>;
-  /** Who is signed in (web). */
+  /** Who is signed in to cloud saving, if anyone. */
   account?: Account;
-  /** True if some writing hasn't reached its home yet (web: not yet in Drive). */
+  /** True if some writing hasn't reached cloud saving yet. */
   hasUnsavedWork?(): boolean;
-  /** Sign out (or leave the example story). Unsaved writing stays in this browser unless discarded. */
+  /** Sign out of cloud saving. */
   signOut?(discardUnsaved?: boolean): void;
 }

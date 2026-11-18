@@ -24,7 +24,7 @@ export function SaveStatus({ state, problem, onRetry }: Props) {
         <span className="dot" />
         <span>
           {problem?.needsReconnect
-            ? "Google session paused · your words are kept in this browser"
+            ? "Cloud saving paused · your words are safe on this computer"
             : "Not saved yet · your words are still here"}
         </span>
         <button className="btn quiet" onClick={onRetry} title={problem?.message}>
@@ -33,17 +33,12 @@ export function SaveStatus({ state, problem, onRetry }: Props) {
       </div>
     );
   }
-  const web = platform.kind === "web";
   const label =
     state === "pending" || state === "saving"
       ? "Saving…"
       : state === "saved"
-        ? web
-          ? "Saved to your Google Drive"
-          : "Saved on this computer · encrypted"
-        : web
-          ? "In your Google Drive"
-          : "Kept on this computer · encrypted";
+        ? "Saved on this computer · encrypted"
+        : "Kept on this computer · encrypted";
   return (
     <div className={`save-status ${state}`} role="status" aria-live="polite">
       <span className="dot" />

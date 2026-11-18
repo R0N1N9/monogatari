@@ -59,9 +59,9 @@ them, and it makes no network connections.
 Copying the folder is a safe backup, but it can only be opened on a computer
 that has the key (cloud saving, coming next, solves moving to a new computer).
 
-There is also a **website** version that saves to your own Google Drive: see
-[WEBSITE.md](WEBSITE.md). The desktop app doesn't sync with it yet; that's
-next. Not yet included: dictation and the book export. See
+There is also a **website** version, [sutori](https://github.com/R0N1N9/sutori),
+that saves to your own Google Drive. The desktop app doesn't sync with it yet;
+that's next. Not yet included: dictation and the book export. See
 [ROADMAP.md](ROADMAP.md).
 
 ## For developers
@@ -100,13 +100,6 @@ Test the story model and timeline:
 npm test
 ```
 
-Drive the real website end to end, in a browser, against a stand-in Google
-Drive (no real account used):
-
-```bash
-npm run test:e2e:web
-```
-
 Drive the real desktop app end to end (Linux; needs `xvfb`, `webkit2gtk-driver`,
 and `cargo install tauri-driver`). It uses a temporary data folder, never your
 real story:
@@ -133,7 +126,7 @@ npx tauri build
 | `crates/vault_core/` | Encrypted, crash-safe story storage with rolling backups and damage recovery. Fully tested. |
 | `src-tauri/` | The thin native shell. Exposes the engines, keeps the key in the system keychain, and grants access only to folders you choose. |
 | `src/` | The interface (React + TypeScript), in the Candlelight design. |
-| `src/story/` | The story model (chapters, folders), shared with the future website and haiku. |
+| `src/story/` | The story model (chapters, folders, merging), shared with sutori and haiku. |
 | `src/platform/` | The only place the interface touches the computer. A browser preview stands in when not running as the desktop app. |
 | `e2e/` | Drives the real desktop app: write, restart, verify. |
 | `design/` | Interactive design previews (Candlelight, Dawn, Nocturne). |

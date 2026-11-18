@@ -35,10 +35,18 @@ an **illuminated manuscript of your own epic**.
 **Working today:** write the chapters of your life on a candlelit timeline, beside your photos
 arranged by the date each was taken.
 
-- **Desktop app** (Mac, Windows, Linux): everything encrypted on your computer.
-  How to get it: [`docs/RUN.md`](docs/RUN.md)
-- **Website:** sign in with Google and your story is saved to your own Google Drive; or look
-  around with an example story. Setup and publishing: [`docs/WEBSITE.md`](docs/WEBSITE.md)
+This repository is the **desktop app** (Mac, Windows, Linux): everything encrypted on your
+computer. How to get it: [`docs/RUN.md`](docs/RUN.md)
+
+**The family:**
+
+| | |
+|---|---|
+| **monogatari** (物語) | This repository. The desktop app: the full epic, whole drives of photos, encrypted on your computer. |
+| **[sutori](https://github.com/R0N1N9/sutori)** (ストーリー) | The website: sign in with Google and your story is saved to your own Google Drive. |
+| **haiku** (俳句) | The Android companion, for capturing moments on the go. |
+
+All three share one story format.
 - **The full concept:** [`docs/VISION.md`](docs/VISION.md)
 - **The plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md)
 

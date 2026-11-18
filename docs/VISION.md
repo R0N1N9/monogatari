@@ -83,13 +83,14 @@ The first thing we make excellent is the **narrative core**:
 
 ## Three ways in, one story
 
-| | Desktop **monogatari** | **Website** | **haiku** (Android) |
+| | Desktop **monogatari** | **sutori** (website) | **haiku** (Android) |
 |---|---|---|---|
 | Best for | The full epic; whole drives of photos; the book | Reaching your story from any computer | Capturing moments on the go |
 | Photos | Reads folders and whole drives directly | Reads a folder you pick, inside the browser | Camera and phone gallery |
 | Saving | Encrypted on the laptop, optional Google Drive | Google Drive | Google Drive |
 
-All three share one story format and meet in the person's own Google Drive.
+All three share one story format and meet in the person's own Google Drive. The website lives
+in its own repository: [R0N1N9/sutori](https://github.com/R0N1N9/sutori).
 
 ## Trauma-informed commitments
 

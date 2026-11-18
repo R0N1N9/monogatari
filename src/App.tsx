@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { AccountSheet, initial } from "./components/AccountSheet";
 import { ChapterEditor } from "./components/ChapterEditor";
 import { FoldersSheet } from "./components/FoldersSheet";
 import { Grounding } from "./components/Grounding";
@@ -37,7 +36,7 @@ const message = (e: unknown) => (typeof e === "string" ? e : e instanceof Error 
 
 export default function App() {
   const platform = usePlatform();
-  const { story, loadProblem, retryLoad, info, saveState, saveProblem, change, retry, flush } = useStory();
+  const { story, loadProblem, retryLoad, info, saveState, saveProblem, change, retry } = useStory();
 
   const [theme, setTheme] = useState<Theme>(initialTheme);
   const [view, setView] = useState<View>({ kind: "timeline" });
@@ -47,7 +46,6 @@ export default function App() {
   const [notice, setNotice] = useState<string | null>(null);
   const [grounding, setGrounding] = useState(false);
   const [foldersOpen, setFoldersOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   // Folders chosen this visit, where the platform can't remember them (web).
   const [sessionFolders, setSessionFolders] = useState<PhotoFolder[]>([]);
   const [viewer, setViewer] = useState<{ list: PhotoItem[]; index: number } | null>(null);
@@ -184,11 +182,6 @@ export default function App() {
             </button>
           </>
         )}
-        {platform.kind === "preview" && platform.signOut && (
-          <button className="btn quiet" onClick={() => platform.signOut?.()}>
-            Leave example
-          </button>
-        )}
         <button className="btn" onClick={() => setGrounding(true)} aria-label="Grounding and support">
           <span className="dot" />
           <span className="label-wide">Grounding</span>
@@ -200,15 +193,6 @@ export default function App() {
         >
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
-        {platform.account && (
-          <button className="avatar" onClick={() => setAccountOpen(true)} aria-label={`Account: ${platform.account.email}`}>
-            {platform.account.picture ? (
-              <img src={platform.account.picture} alt="" referrerPolicy="no-referrer" />
-            ) : (
-              initial(platform.account)
-            )}
-          </button>
-        )}
       </header>
 
       <main className="stage" ref={stage}>
@@ -242,11 +226,6 @@ export default function App() {
               <button className="btn primary" onClick={() => void retryLoad()}>
                 {loadProblem.needsReconnect ? "Reconnect" : "Try again"}
               </button>
-              {platform.signOut && (
-                <button className="btn quiet" onClick={() => platform.signOut?.()}>
-                  {platform.kind === "web" ? "Sign out" : "Leave"}
-                </button>
-              )}
             </div>
           </section>
         ) : !story ? (
@@ -281,10 +260,8 @@ export default function App() {
             <p className="privacy-line">
               <LockIcon />
               {info?.keyHome === "preview"
-                ? "This is an example. Your own story is saved privately: encrypted on your computer, or in your own Google Drive."
-                : info?.keyHome === "google_drive"
-                  ? "Your story is saved in a private monogatari folder in your own Google Drive. monogatari can't see your other files, and your photos never leave this computer."
-                  : info?.keyHome === "file"
+                ? "In the desktop app, your writing is encrypted on your computer."
+                : info?.keyHome === "file"
                   ? "Your writing is encrypted on this computer. This system has no keychain, so the key is kept in a private file beside it."
                   : "Your writing is encrypted on this computer, with its key held in your system keychain."}
             </p>
@@ -344,17 +321,6 @@ export default function App() {
           onAdd={chooseFolder}
           onForget={forgetFolder}
           onClose={() => setFoldersOpen(false)}
-        />
-      )}
-      {accountOpen && platform.account && (
-        <AccountSheet
-          account={platform.account}
-          finishSaving={async () => {
-            await flush();
-            return platform.hasUnsavedWork?.() ?? false;
-          }}
-          onSignOut={(discard) => platform.signOut?.(discard)}
-          onClose={() => setAccountOpen(false)}
         />
       )}
       {grounding && <Grounding onClose={() => setGrounding(false)} />}

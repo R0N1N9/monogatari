@@ -31,18 +31,18 @@ react to. We are non-dogmatic about the order inside a phase — we follow what 
 - [ ] Place individual photos inside a chapter — the illuminated-manuscript effect.
 - [ ] Read view: the epic as a book.
 
-## Phase 2b — The website, saving to your own Google Drive
+## Phase 2b — The website: sutori
 
-- [x] The same interface as a static site (no server of our own), published to GitHub Pages.
-- [x] Sign in with Google; the story is saved to the hidden app folder in the person's own Drive
-      (non-sensitive `drive.appdata` permission only) and restored on any visit.
-- [x] Edits from different devices and tabs merge without losing either; deletions stay deleted.
-- [x] Session expiry, going offline, and closing the tab never lose words.
-- [x] Photos read inside the browser, never uploaded.
-- [x] An example story to look around without signing in.
-- [ ] Desktop app: optional Google sign-in to sync with the website (same Drive file, same merge).
-- [ ] Optional small thumbnails so the timeline looks right everywhere; originals stay put.
-- [ ] Chrome/Edge: remember photo folders between visits (with the browser's permission).
+Built, and moved to its own repository: **[R0N1N9/sutori](https://github.com/R0N1N9/sutori)**.
+Sign in with Google, saved to the person's own Drive, photos never uploaded, edits from
+several devices merged. Its roadmap lives there.
+
+## Phase 2c — Sync the desktop app with sutori
+
+- [x] Shared story format, with deletion records and a tested merge (in `src/story/`).
+- [ ] Optional Google sign-in in the desktop app, using the same Google Cloud project as sutori,
+      so both read and write the same `monogatari-story.json` in the person's Drive.
+- [ ] Keep the local encrypted copy as the source of truth; Drive as an optional mirror.
 
 ## Phase 3 — Dictation (on-device)
 

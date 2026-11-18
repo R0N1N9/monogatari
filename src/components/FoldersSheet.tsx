@@ -7,7 +7,7 @@ import { CloseIcon, FolderIcon } from "./icons";
 
 interface Props {
   folders: PhotoFolder[];
-  /** False on the website: browsers can't reopen a folder on the next visit. */
+  /** False where folders can't be reopened next time (e.g. a browser). */
   remembers: boolean;
   photos: PhotoItem[];
   scanning: boolean;
@@ -34,7 +34,7 @@ export function FoldersSheet({ folders, remembers, photos, scanning, onAdd, onFo
         <p>
           {remembers
             ? "monogatari remembers these and gathers their photos each time it opens."
-            : "Your photos are read right here in your browser and never uploaded. Browsers can't reopen folders on your next visit, so you'll choose them again then."}
+            : "Choose these folders again next time you open monogatari."}
         </p>
         {folders.length === 0 ? (
           <p className="soft">No folders yet.</p>
