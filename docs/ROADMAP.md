@@ -37,12 +37,18 @@ Built, and moved to its own repository: **[R0N1N9/sutori](https://github.com/R0N
 Sign in with Google, saved to the person's own Drive, photos never uploaded, edits from
 several devices merged. Its roadmap lives there.
 
-## Phase 2c — Sync the desktop app with sutori
+## Phase 2c — One story across monogatari, sutori and haiku
 
-- [x] Shared story format, with deletion records and a tested merge (in `src/story/`).
-- [ ] Optional Google sign-in in the desktop app, using the same Google Cloud project as sutori,
-      so both read and write the same `monogatari-story.json` in the person's Drive.
-- [ ] Keep the local encrypted copy as the source of truth; Drive as an optional mirror.
+- [x] Shared story format v2 ([`spec/STORY_FORMAT.md`](../spec/STORY_FORMAT.md)): one Drive file
+      per chapter and moment, photos stored once and never edited, revision history, and
+      "keep both" when two devices change the same thing. Language-neutral test cases in
+      [`spec/fixtures/`](../spec/fixtures/); TypeScript reference in `src/story/sync/`.
+- [ ] sutori moves to format v2: moments, attached photos (resized, location removed),
+      Drive's change feed, and a "kept both versions" view.
+- [ ] haiku (native Android) implements the format and passes the same test cases: camera-first
+      capture, share-to-haiku, offline queue, background sync.
+- [ ] Optional Google sign-in in the desktop app (same Google Cloud project), keeping the local
+      encrypted copy as the source of truth and Drive as a mirror.
 
 ## Phase 3 — Dictation (on-device)
 

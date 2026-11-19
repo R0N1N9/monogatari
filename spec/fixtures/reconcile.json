@@ -1,0 +1,1164 @@
+{
+  "about": "Combining versions (STORY_FORMAT.md §6). For each case, an app's reconcile(input) must produce expect.action, expect.parent (the rev an upload builds on), and expect.notice. expect.result lists fields the resulting item must have: a value of null means the field must be absent; 'alternates' lists, in order, the fields each alternate must have. Times are Unix ms.",
+  "cases": [
+    {
+      "name": "nothing anywhere",
+      "rule": "6.2.1",
+      "input": {
+        "base": null,
+        "localChanged": false,
+        "local": null,
+        "remote": null
+      },
+      "expect": {
+        "notice": null,
+        "action": "none",
+        "parent": null
+      }
+    },
+    {
+      "name": "a new chapter, not yet in Drive",
+      "rule": "6.2.2",
+      "input": {
+        "base": null,
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": null
+      },
+      "expect": {
+        "notice": null,
+        "action": "upload",
+        "parent": null,
+        "result": {
+          "body": "I packed the car in the dark."
+        }
+      }
+    },
+    {
+      "name": "a chapter this device doesn't have yet",
+      "rule": "6.2.3",
+      "input": {
+        "base": null,
+        "localChanged": false,
+        "local": null,
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r1"
+        }
+      }
+    },
+    {
+      "name": "Drive unchanged; we edited",
+      "rule": "6.2.4",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000005,
+          "title": "Leaving",
+          "body": "I packed the car in the dark so no one would see me cry.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "upload",
+        "parent": "r1",
+        "result": {
+          "body": "I packed the car in the dark so no one would see me cry."
+        }
+      }
+    },
+    {
+      "name": "Drive unchanged; nothing to do",
+      "rule": "6.2.4",
+      "input": {
+        "base": "r1",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "none",
+        "parent": null
+      }
+    },
+    {
+      "name": "another device edited; we didn't",
+      "rule": "6.2.5.1",
+      "input": {
+        "base": "r1",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000009,
+          "title": "Leaving",
+          "body": "Edited on the laptop.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r2",
+          "body": "Edited on the laptop."
+        }
+      }
+    },
+    {
+      "name": "several edits elsewhere since our base",
+      "rule": "6.2.5.1",
+      "input": {
+        "base": "r1",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r5",
+          "history": [
+            "r4",
+            "r3",
+            "r2",
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000040,
+          "title": "Leaving",
+          "body": "Fifth version.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r5"
+        }
+      }
+    },
+    {
+      "name": "our base is older than the 100 revisions Drive remembers",
+      "rule": "6.2.5.1",
+      "input": {
+        "base": "r1",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000000,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "x-new",
+          "history": [
+            "x0",
+            "x1",
+            "x2",
+            "x3",
+            "x4",
+            "x5",
+            "x6",
+            "x7",
+            "x8",
+            "x9",
+            "x10",
+            "x11",
+            "x12",
+            "x13",
+            "x14",
+            "x15",
+            "x16",
+            "x17",
+            "x18",
+            "x19",
+            "x20",
+            "x21",
+            "x22",
+            "x23",
+            "x24",
+            "x25",
+            "x26",
+            "x27",
+            "x28",
+            "x29",
+            "x30",
+            "x31",
+            "x32",
+            "x33",
+            "x34",
+            "x35",
+            "x36",
+            "x37",
+            "x38",
+            "x39",
+            "x40",
+            "x41",
+            "x42",
+            "x43",
+            "x44",
+            "x45",
+            "x46",
+            "x47",
+            "x48",
+            "x49",
+            "x50",
+            "x51",
+            "x52",
+            "x53",
+            "x54",
+            "x55",
+            "x56",
+            "x57",
+            "x58",
+            "x59",
+            "x60",
+            "x61",
+            "x62",
+            "x63",
+            "x64",
+            "x65",
+            "x66",
+            "x67",
+            "x68",
+            "x69",
+            "x70",
+            "x71",
+            "x72",
+            "x73",
+            "x74",
+            "x75",
+            "x76",
+            "x77",
+            "x78",
+            "x79",
+            "x80",
+            "x81",
+            "x82",
+            "x83",
+            "x84",
+            "x85",
+            "x86",
+            "x87",
+            "x88",
+            "x89",
+            "x90",
+            "x91",
+            "x92",
+            "x93",
+            "x94",
+            "x95",
+            "x96",
+            "x97",
+            "x98",
+            "x99"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000099,
+          "title": "Leaving",
+          "body": "Much later.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "x-new"
+        }
+      }
+    },
+    {
+      "name": "two uploads raced: Drive's version never saw ours",
+      "rule": "6.2.5.2",
+      "input": {
+        "base": "rA",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "rA",
+          "history": [
+            "r0"
+          ],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000010,
+          "title": "Leaving",
+          "body": "Written on the desktop.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "rB",
+          "history": [
+            "r0"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000012,
+          "title": "Leaving",
+          "body": "Written on the phone.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "rB",
+        "result": {
+          "body": "Written on the phone.",
+          "alternates": [
+            {
+              "body": "Written on the desktop.",
+              "rev": "rA",
+              "device": "dev-a"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "two uploads raced with identical words",
+      "rule": "6.2.5.2",
+      "input": {
+        "base": "rA",
+        "localChanged": false,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "rA",
+          "history": [
+            "r0"
+          ],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000010,
+          "title": "Leaving",
+          "body": "Same words.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "rB",
+          "history": [
+            "r0"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000012,
+          "title": "Leaving",
+          "body": "Same words.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "rB"
+        }
+      }
+    },
+    {
+      "name": "both edited to the same words",
+      "rule": "6.2.6.1",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000020,
+          "title": "Leaving",
+          "body": "We agree.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000030,
+          "title": "Leaving",
+          "body": "We agree.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r2"
+        }
+      }
+    },
+    {
+      "name": "only the time differs, not the words",
+      "rule": "6.2.6.1",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000050,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000030,
+          "title": "Leaving",
+          "body": "I packed the car in the dark.",
+          "year": 2011,
+          "month": 9,
+          "note": "an unknown field doesn't count"
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r2"
+        }
+      }
+    },
+    {
+      "name": "removed elsewhere, but we kept writing",
+      "rule": "6.2.6.2",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000060,
+          "title": "Leaving",
+          "body": "Still writing this.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000050,
+          "deleted": true
+        }
+      },
+      "expect": {
+        "notice": "kept-edited-after-removal",
+        "action": "upload",
+        "parent": "r2",
+        "result": {
+          "body": "Still writing this.",
+          "deleted": null
+        }
+      }
+    },
+    {
+      "name": "we removed it, but it was edited elsewhere",
+      "rule": "6.2.6.3",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000060,
+          "deleted": true
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000050,
+          "title": "Leaving",
+          "body": "Kept writing on the laptop.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": "kept-edited-after-removal",
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r2",
+          "body": "Kept writing on the laptop.",
+          "deleted": null
+        }
+      }
+    },
+    {
+      "name": "removed on both",
+      "rule": "6.2.6.4",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000060,
+          "deleted": true
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000050,
+          "deleted": true
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "take-remote",
+        "parent": null,
+        "result": {
+          "rev": "r2",
+          "deleted": true
+        }
+      }
+    },
+    {
+      "name": "both edited differently; ours is newer",
+      "rule": "6.2.6.5",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000080,
+          "title": "Leaving",
+          "body": "The desktop version.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "The phone version.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "r2",
+        "result": {
+          "body": "The desktop version.",
+          "alternates": [
+            {
+              "body": "The phone version.",
+              "device": "dev-b",
+              "rev": "r2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "both edited differently; Drive's is newer",
+      "rule": "6.2.6.5",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "The desktop version.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000080,
+          "title": "Leaving",
+          "body": "The phone version.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "r2",
+        "result": {
+          "body": "The phone version.",
+          "alternates": [
+            {
+              "body": "The desktop version.",
+              "device": "dev-a",
+              "rev": "r1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "both edited at the same millisecond: later device id wins",
+      "rule": "6.3",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "From dev-a.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "From dev-b.",
+          "year": 2011,
+          "month": 9
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "r2",
+        "result": {
+          "body": "From dev-b.",
+          "alternates": [
+            {
+              "body": "From dev-a."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "existing kept versions are carried over, without duplicates",
+      "rule": "6.3",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000080,
+          "title": "Leaving",
+          "body": "The desktop version.",
+          "year": 2011,
+          "month": 9,
+          "alternates": [
+            {
+              "title": "Leaving",
+              "body": "An older kept version.",
+              "year": 2011,
+              "month": 9,
+              "media": [],
+              "updatedAt": 1731000000005,
+              "device": "dev-c",
+              "rev": "rOld"
+            }
+          ]
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "The phone version.",
+          "year": 2011,
+          "month": 9,
+          "alternates": [
+            {
+              "title": "Leaving",
+              "body": "An older kept version.",
+              "year": 2011,
+              "month": 9,
+              "media": [],
+              "updatedAt": 1731000000005,
+              "device": "dev-c",
+              "rev": "rOld"
+            },
+            {
+              "title": "Leaving",
+              "body": "The desktop version.",
+              "year": 2011,
+              "month": 9,
+              "media": [],
+              "updatedAt": 1731000000006,
+              "device": "dev-c",
+              "rev": "rDup"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "r2",
+        "result": {
+          "body": "The desktop version.",
+          "alternates": [
+            {
+              "body": "The phone version."
+            },
+            {
+              "body": "An older kept version."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "the main version keeps its unknown fields",
+      "rule": "6.3",
+      "input": {
+        "base": "r1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r1",
+          "history": [],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000080,
+          "title": "Leaving",
+          "body": "Mine.",
+          "year": 2011,
+          "month": 9,
+          "haikuMood": "still"
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r2",
+          "history": [
+            "r1"
+          ],
+          "device": "dev-b",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000070,
+          "title": "Leaving",
+          "body": "Theirs.",
+          "year": 2011,
+          "month": 9,
+          "webOnly": true
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "r2",
+        "result": {
+          "body": "Mine.",
+          "haikuMood": "still",
+          "alternates": [
+            {
+              "body": "Theirs."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "a moment captured on the phone and recaptioned on the desktop",
+      "rule": "6.2.6.5",
+      "input": {
+        "base": "m1",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "moment",
+          "id": "22222222-2222-4222-8222-222222222222",
+          "rev": "m1",
+          "history": [],
+          "device": "dev-desktop",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000090,
+          "text": "The coast, again. We stayed until dark.",
+          "takenAt": 1688289300,
+          "feeling": null,
+          "chapterId": null,
+          "media": [
+            {
+              "id": "33333333-3333-4333-8333-333333333333",
+              "width": 2048,
+              "height": 1536,
+              "takenAt": 1688289300,
+              "bytes": 612345
+            }
+          ]
+        },
+        "remote": {
+          "format": 2,
+          "kind": "moment",
+          "id": "22222222-2222-4222-8222-222222222222",
+          "rev": "m2",
+          "history": [
+            "m1"
+          ],
+          "device": "dev-phone",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000060,
+          "text": "The coast, again!",
+          "takenAt": 1688289300,
+          "feeling": "calm",
+          "chapterId": null,
+          "media": [
+            {
+              "id": "33333333-3333-4333-8333-333333333333",
+              "width": 2048,
+              "height": 1536,
+              "takenAt": 1688289300,
+              "bytes": 612345
+            }
+          ]
+        }
+      },
+      "expect": {
+        "notice": "edited-on-two-devices",
+        "action": "keep-both",
+        "parent": "m2",
+        "result": {
+          "text": "The coast, again. We stayed until dark.",
+          "alternates": [
+            {
+              "text": "The coast, again!",
+              "feeling": "calm"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "clearing kept versions is an ordinary upload",
+      "rule": "6.3",
+      "input": {
+        "base": "r3",
+        "localChanged": true,
+        "local": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r3",
+          "history": [
+            "r2"
+          ],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000095,
+          "title": "Leaving",
+          "body": "The one I chose.",
+          "year": 2011,
+          "month": 9
+        },
+        "remote": {
+          "format": 2,
+          "kind": "chapter",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "rev": "r3",
+          "history": [
+            "r2"
+          ],
+          "device": "dev-a",
+          "createdAt": 1731000000000,
+          "updatedAt": 1731000000090,
+          "title": "Leaving",
+          "body": "The one I chose.",
+          "year": 2011,
+          "month": 9,
+          "alternates": [
+            {
+              "title": "Leaving",
+              "body": "Other",
+              "year": 2011,
+              "month": 9,
+              "media": [],
+              "updatedAt": 1731000000000,
+              "device": "dev-b",
+              "rev": "r1"
+            }
+          ]
+        }
+      },
+      "expect": {
+        "notice": null,
+        "action": "upload",
+        "parent": "r3",
+        "result": {
+          "body": "The one I chose.",
+          "alternates": null
+        }
+      }
+    }
+  ]
+}

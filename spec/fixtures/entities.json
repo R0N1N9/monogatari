@@ -1,0 +1,289 @@
+{
+  "about": "Reading a file (STORY_FORMAT.md §5). expect is 'valid', 'invalid', or 'newer-format' (valid JSON from a later format: never overwrite). When roundTripUnchanged is true, reading then writing the item without changes must give back exactly the same JSON object (key order aside), unknown fields included.",
+  "cases": [
+    {
+      "name": "a chapter",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 9
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "a moment with a photo",
+      "input": {
+        "format": 2,
+        "kind": "moment",
+        "id": "22222222-2222-4222-8222-222222222222",
+        "rev": "m1",
+        "history": [],
+        "device": "dev-phone",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "text": "The coast, again.",
+        "takenAt": 1688289300,
+        "feeling": null,
+        "chapterId": null,
+        "media": [
+          {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "width": 2048,
+            "height": 1536,
+            "takenAt": 1688289300,
+            "bytes": 612345
+          }
+        ]
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "a chapter about no particular time",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": null,
+        "month": null
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "a removed chapter (tombstone)",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r2",
+        "history": [
+          "r1"
+        ],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "deleted": true
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "unknown fields, including inside a photo, are kept unchanged",
+      "input": {
+        "format": 2,
+        "kind": "moment",
+        "id": "22222222-2222-4222-8222-222222222222",
+        "rev": "m1",
+        "history": [],
+        "device": "dev-phone",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "text": "The coast, again.",
+        "takenAt": 1688289300,
+        "feeling": null,
+        "chapterId": null,
+        "media": [
+          {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "width": 2048,
+            "height": 1536,
+            "takenAt": null,
+            "bytes": 1,
+            "blurHash": "LEHV6n"
+          }
+        ],
+        "feelingColor": "#7fa070",
+        "haiku": {
+          "lines": [
+            "sea",
+            "salt",
+            "home"
+          ]
+        }
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "kept versions after a conflict",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r3",
+        "history": [
+          "r2"
+        ],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 9,
+        "alternates": [
+          {
+            "title": "Leaving",
+            "body": "An older kept version.",
+            "year": 2011,
+            "month": 9,
+            "media": [],
+            "updatedAt": 1731000000005,
+            "device": "dev-c",
+            "rev": "rOld"
+          }
+        ]
+      },
+      "expect": "valid",
+      "roundTripUnchanged": true
+    },
+    {
+      "name": "written by a newer version of the format",
+      "input": {
+        "format": 3,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 9
+      },
+      "expect": "newer-format",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "missing its revision id",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 9
+      },
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "a month without a year",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": null,
+        "month": 5
+      },
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "a month out of range",
+      "input": {
+        "format": 2,
+        "kind": "chapter",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 13
+      },
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "an unknown kind",
+      "input": {
+        "format": 2,
+        "kind": "poem",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "rev": "r1",
+        "history": [],
+        "device": "dev-a",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "title": "Leaving",
+        "body": "I packed the car in the dark.",
+        "year": 2011,
+        "month": 9
+      },
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "text that isn't text",
+      "input": {
+        "format": 2,
+        "kind": "moment",
+        "id": "22222222-2222-4222-8222-222222222222",
+        "rev": "m1",
+        "history": [],
+        "device": "dev-phone",
+        "createdAt": 1731000000000,
+        "updatedAt": 1731000000000,
+        "text": 42,
+        "takenAt": 1688289300,
+        "feeling": null,
+        "chapterId": null,
+        "media": [
+          {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "width": 2048,
+            "height": 1536,
+            "takenAt": 1688289300,
+            "bytes": 612345
+          }
+        ]
+      },
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    },
+    {
+      "name": "not an object",
+      "input": [
+        "chapter"
+      ],
+      "expect": "invalid",
+      "roundTripUnchanged": false
+    }
+  ]
+}
