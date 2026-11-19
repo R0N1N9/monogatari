@@ -1,6 +1,13 @@
-# 物語 · monogatari
+<p align="center"><img src="public/icon.png" width="120" alt="monogatari logo"></p>
 
-*A beautiful, private place to tell the story of your life — and in the telling, to re-know yourself.*
+<h1 align="center">物語 · monogatari</h1>
+
+<p align="center"><i>A beautiful, private place to tell the story of your life — and in the telling, to re-know yourself.</i></p>
+
+<p align="center">
+  <img src="docs/screenshots/timeline.png" width="900" alt="The monogatari timeline: chapters and photos arranged by year">
+  <br><sub>Your timeline: chapters you write, beside photos placed by the date each was taken. (Browser preview with an example story and drawn example photos.)</sub>
+</p>
 
 monogatari (Japanese: "story / narrative") is a cross-platform desktop companion for mental
 health through **reconnaissance** — *re-knowing*. It is built around a single belief: that
@@ -18,6 +25,26 @@ You write the chapters of your life. You point monogatari at a folder of your ph
 and it reads each image's capture date and arranges them along your timeline automatically —
 so your visual history assembles itself into your narrative. The result is less a diary than
 an **illuminated manuscript of your own epic**.
+
+## Features
+
+- **Write the chapters of your life**, each placed at a year (and optionally a month) on a candlelit timeline, with
+  gentle prompts if you want a place to begin.
+- **Photos arrange themselves.** Choose a folder or a whole drive; monogatari reads each photo's capture date (EXIF)
+  and lays it along your timeline, year by year. It remembers your folders. Photos are only ever read.
+- **Open any photo** to see the moment it was taken, and walk through time with ← and →.
+- **Encrypted, crash-safe storage** on your computer, with the key in the system keychain and rolling backups.
+- **Grounding** is always one click away in the top bar, with crisis lines. **Light and dark** modes.
+- No network connections and no telemetry.
+
+## Screenshots
+
+| | |
+|---|---|
+| <img src="docs/screenshots/chapter-editor-dark.png" alt="Writing a chapter in dark mode, with the photos from that year below"> | <img src="docs/screenshots/grounding.png" alt="The grounding sheet: a breathing guide and crisis lines"> |
+| **Writing a chapter** (dark mode), with that year's photos below. | **Grounding**: a breathing guide and crisis lines, always in the top bar. |
+
+Screenshots are from the browser preview (`npm run dev`), which uses a fictional example story and drawn example photos.
 
 ## What it stands for
 
@@ -49,6 +76,37 @@ computer. How to get it: [`docs/RUN.md`](docs/RUN.md)
 All three share one story format.
 - **The full concept:** [`docs/VISION.md`](docs/VISION.md)
 - **The plan:** [`docs/ROADMAP.md`](docs/ROADMAP.md)
+
+## Getting started
+
+Installers for macOS, Windows and Linux are built by GitHub Actions; [`docs/RUN.md`](docs/RUN.md) explains how to
+download and open them.
+
+For development (Node 22+, Rust stable, and WebKitGTK on Linux):
+
+```bash
+npm install
+npx tauri dev        # the desktop app, with live reload
+npm run dev          # only the interface, in a browser, with example photos
+npm test             # story model and timeline
+cargo test -p photo_core -p vault_core   # photo engine and encrypted storage
+```
+
+## Tech and structure
+
+Tauri 2 (Rust) desktop shell with a React + TypeScript interface built with Vite.
+
+| Path | What it is |
+|---|---|
+| `crates/photo_core/` | Photo engine: scans folders, reads EXIF capture dates, orders and groups photos |
+| `crates/vault_core/` | Encrypted, crash-safe story storage with rolling backups and damage recovery |
+| `src-tauri/` | The native shell: exposes the engines, keeps the key in the system keychain |
+| `src/` | The interface (React + TypeScript), in the Candlelight design; `src/story/` is the shared story model |
+| `spec/` | The story format shared with sutori and haiku |
+| `design/` | Interactive design previews (Candlelight, Dawn, Nocturne) |
+| `e2e/` | End-to-end tests that drive the real desktop app |
+
+More detail: [`docs/RUN.md`](docs/RUN.md).
 
 ## For anyone in crisis
 
