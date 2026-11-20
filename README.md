@@ -20,6 +20,14 @@ An *epic* is the long tale you build with room to breathe; a *haiku* is one mome
 passing. What you capture in Haiku is meant to flow into Sutōri's timeline, through your own
 Google Drive.
 
+## A look at the apps
+
+| Sutōri: your timeline | Sutōri: writing a chapter | Haiku: today |
+|---|---|---|
+| <img src="https://github.com/R0N1N9/sutori/raw/HEAD/docs/screenshots/timeline.png" alt="Sutōri timeline: chapters and photos arranged by year"> | <img src="https://github.com/R0N1N9/sutori/raw/HEAD/docs/screenshots/chapter.png" alt="Sutōri chapter editor with year and month and that year's photos"> | <img src="https://github.com/R0N1N9/haiku/raw/HEAD/docs/screenshots/01_today.png" width="220" alt="Haiku today screen: mood check, today's question and a reflection from your past"> |
+
+More screenshots in each app's repository.
+
 ## What they stand for
 
 - **Your story is yours.** Stored on your own devices, encrypted. No telemetry, no accounts of
