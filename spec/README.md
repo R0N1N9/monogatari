@@ -1,8 +1,10 @@
 # The shared story format
 
-monogatari (desktop), [sutori](https://github.com/R0N1N9/sutori) (web) and
-haiku (Android) are written in different languages but keep one story in
-sync through the person's Google Drive. They agree through two things here:
+The Monogatari suite's apps, [Sutōri](https://github.com/R0N1N9/sutori)
+(desktop and web) and [Haiku](https://github.com/R0N1N9/haiku) (Android), are
+written in different languages but are meant to keep one story in sync through
+the person's Google Drive. They agree through the files here (**draft**: see
+the status note in `STORY_FORMAT.md`):
 
 | File | What it is |
 |---|---|
@@ -36,10 +38,11 @@ plain JSON, so any language can load them.
 3. Each case has a `name` (and reconcile cases a `rule`, pointing at the
    section of `STORY_FORMAT.md`) to use as the test's display name.
 
-The TypeScript reference implementation, used by monogatari and sutori, is in
-[`src/story/sync/`](../src/story/sync/); its test
-[`conformance.test.ts`](../src/story/sync/conformance.test.ts) shows the
-three loops above.
+The TypeScript reference implementation lives in Sutōri, in
+[`src/story/sync/`](https://github.com/R0N1N9/sutori/tree/main/src/story/sync); its test
+[`conformance.test.ts`](https://github.com/R0N1N9/sutori/blob/main/src/story/sync/conformance.test.ts)
+shows the three loops above, and Sutōri keeps a copy of these fixtures in its
+own `spec/fixtures/`.
 
 ## Changing the format
 

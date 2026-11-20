@@ -18,34 +18,36 @@ metaphor. It rests on established, evidence-informed practice:
 - **Interoception** — re-knowing the body's signals before they become overwhelm.
 - **Values clarification (ACT)** — reconnaissance of what actually matters to you.
 
-monogatari is a tool for reflection and resilience. It stands **alongside** real-world support and
+The Monogatari suite is a tool for reflection and resilience. It stands **alongside** real-world support and
 professional care. It is not therapy, it does not diagnose, and it never replaces a clinician or a
 crisis service. See [SAFETY.md](SAFETY.md).
 
-## Two apps, one story
+## The suite: two apps, one story
 
-| | **物語 monogatari** | **俳句 haiku** |
+**Monogatari** (物語, "tale") is the suite. It has two apps:
+
+| | **Sutōri** (ストーリー, "story") | **Haiku** (俳句) |
 |---|---|---|
-| Form | The **epic** — long, woven, at rest | The **short form** — a single moment |
-| Platform | Desktop: macOS, Windows, Linux | Android (APK) |
-| Role | Author and read your whole life-story | Capture on the go; feed the epic later |
-| Strength | Space, depth, your full photo library, a printable book | Immediacy, always in your pocket |
+| Form | The **epic**: long, woven, at rest | The **short form**: a single moment |
+| Runs on | Desktop (macOS, Windows, Linux) and the web | Android |
+| Role | Interactive stories and timelines of your life: you feed it your writing, photos and moments, and it tells your story back | Short daily check-ins, three-line reflections, quick captures |
+| Strength | Space, depth, whole photo libraries, the book, narration | Immediacy, always in your pocket |
 
 An *epic* is the long tale you build with room to breathe. A *haiku* is one moment caught in
-passing. haiku captures — a photo, three lines, a spoken thought — and those fragments later flow
-into the epic on the desktop, placed on the timeline where they belong. The two share one private,
-portable data format so your story moves between them and always remains entirely yours.
+passing. What Haiku captures flows into Sutōri, placed on the timeline where it belongs. The apps
+meet in the person's own Google Drive and stay entirely theirs.
 
-**The desktop app should own everything a phone does poorly or cannot do at all:**
+**Sutōri on the desktop owns what a phone does poorly or can't do:**
 
-- A large, calm writing canvas built for long-form, uninterrupted writing.
-- Reading your life back as a real illuminated book, chapter by chapter.
-- Ingesting whole **folders or external drives** of photographs and arranging them automatically
-  by the date each was actually taken (from image metadata / EXIF).
-- A large, fast, encrypted local library — years of words and thousands of images.
-- Rich **export** to a printable book or PDF — a physical artifact of your epic.
+- A large, calm writing canvas for long-form, uninterrupted writing.
+- Reading your life back as an illuminated book, chapter by chapter, and, in time, as a
+  **narrated, interactive timeline** built from everything you've given it.
+- Ingesting whole **folders or external drives** of photographs and arranging them by the date
+  each was actually taken.
+- A large, fast, encrypted local library: years of words and thousands of images.
+- **Export** to a printable book or PDF.
 
-## Version 1 — "The Epic"
+## Sutōri's first version: "The Epic"
 
 A beautiful, private place to tell the story of your life — writing woven together with your own
 photographs, arranged automatically on a timeline by when they were taken.
@@ -54,7 +56,7 @@ The first thing we make excellent is the **narrative core**:
 
 1. **Beautiful writing.** Chapters of your life, written in a calm, literary canvas that feels like
    craft, not data entry. This is the centerpiece.
-2. **Your photos, self-arranging.** You point monogatari at a folder or a drive. It reads each
+2. **Your photos, self-arranging.** You point Sutōri at a folder or a drive. It reads each
    image's capture date and lays the photos along your timeline, so your visual history assembles
    itself into your narrative.
 3. **Dictation.** Speak your story instead of typing it, with speech recognized **on-device** so
@@ -68,29 +70,18 @@ The first thing we make excellent is the **narrative core**:
    telemetry, ever. Nothing leaves your laptop unless *you* choose to export it or turn on cloud
    saving. Even dictation runs locally.
 2. **Cloud saving is optional and goes to *your own* Google Drive.** Sign in with Google and your
-   story is saved to a hidden folder in your own Drive that only monogatari can open. We run no
-   servers and hold no one's data. This is also how monogatari, haiku, and the website stay in
-   sync. (Decided: protected by Google sign-in rather than a separate passphrase, for simplicity.
-   An optional extra passphrase lock can be added later without a redesign.)
+   story is saved to a hidden folder in your own Drive that only the suite's apps can open. We
+   run no servers and hold no one's data. This is also how Sutōri and Haiku stay in sync.
+   (Open question: Haiku encrypts its Drive copy with the person's passphrase; Sutōri on the web
+   currently relies on Google sign-in alone. Aligning the two is on the roadmap.)
 3. **Beautiful by default.** The writing and the reading are the point. It should feel like an
    illuminated manuscript of your own life.
 4. **Healing by design — trauma-informed.** You set the pace. Nothing is ever forced or
    streak-shamed. You can step back at any time. Grounding tools and crisis resources are always
    one click away. Difficult material can be approached gently and in small pieces.
 5. **Gentle, never coercive.** No guilt-trip streaks, no dark patterns, no gamified pressure.
-6. **Runs everywhere, installs small.** One fast, lightweight install per platform — plus a
-   website, so your story is reachable from any computer.
-
-## Three ways in, one story
-
-| | Desktop **monogatari** | **sutori** (website) | **haiku** (Android) |
-|---|---|---|---|
-| Best for | The full epic; whole drives of photos; the book | Reaching your story from any computer | Capturing moments on the go |
-| Photos | Reads folders and whole drives directly | Reads a folder you pick, inside the browser | Camera and phone gallery |
-| Saving | Encrypted on the laptop, optional Google Drive | Google Drive | Google Drive |
-
-All three share one story format and meet in the person's own Google Drive. The website lives
-in its own repository: [R0N1N9/sutori](https://github.com/R0N1N9/sutori).
+6. **Runs everywhere, installs small.** Sutōri on every desktop and on the web, Haiku on
+   Android.
 
 ## Trauma-informed commitments
 

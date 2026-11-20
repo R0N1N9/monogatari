@@ -1,7 +1,0 @@
-{
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "What the main window may do: core app functions, the folder picker, and closing itself after the last save finishes. No network, no shell, no broad file access.",
-  "windows": ["main"],
-  "permissions": ["core:default", "core:window:allow-destroy", "dialog:allow-open"]
-}

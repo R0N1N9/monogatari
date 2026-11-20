@@ -1,0 +1,16 @@
+# Checks the shared story format's test cases are well-formed on every change.
+name: Shared format
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check_spec.py

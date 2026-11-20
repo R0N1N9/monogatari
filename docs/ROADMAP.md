@@ -1,80 +1,78 @@
 # Roadmap
 
-A phased plan from empty repo to installable apps. Each phase ends with something you can see and
-react to. We are non-dogmatic about the order inside a phase — we follow what feels most alive.
+The Monogatari suite: **Sutōri** (desktop and web, [R0N1N9/sutori](https://github.com/R0N1N9/sutori))
+and **Haiku** (Android, [R0N1N9/haiku](https://github.com/R0N1N9/haiku)). Each step ends with
+something you can see and use.
 
-## Phase 0 — Foundation ✓
+## Sutōri (ストーリー): desktop and web
 
-- [x] Vision, principles, and safety stance written down.
-- [x] Living visual previews; **Candlelight** chosen (Dawn and Nocturne kept for future themes).
-- [x] Technical foundation: **Tauri** (small, secure, local-first) + React/TypeScript interface.
-- [x] Project that builds on macOS, Windows, and Linux, with automated installers via GitHub Actions.
+**Foundation** ✓
+- [x] Vision, principles and safety stance; the Candlelight design (Dawn and Nocturne kept as
+      future themes).
+- [x] Tauri desktop app for macOS, Windows and Linux, with installers built automatically.
+- [x] One codebase for the desktop app and the website.
 
-## Phase 1 — Your photos, self-arranging (we are here)
-
-- [x] Point at a folder or external drive; read each photo's capture date (EXIF metadata),
-      falling back to the file date and labelling it as a guess.
-- [x] Place photos along the timeline automatically, grouped by year; merge several folders.
-- [x] Photo viewer that walks through time; grounding reachable from everywhere.
-- [x] Remember chosen folders between launches.
+**Your photos, self-arranging** ✓
+- [x] Point at a folder or whole drive; each photo's capture date read from EXIF (falling back to
+      the file date, labelled as a guess); photos placed by year; several folders merged.
+- [x] Photo viewer that walks through time; folders remembered between launches (desktop).
 - [ ] Fast thumbnails for very large libraries, cached locally and encrypted.
-- [ ] HEIC previews on Windows and Linux (macOS already shows them).
+- [ ] HEIC previews on Windows and Linux.
 - [ ] Finer chapters: by month, or by natural gaps in time (trips, seasons of life).
 
-## Phase 2 — The writing canvas
+**The writing canvas** ✓
+- [x] Chapters placed at a year and month; gentle, trauma-informed prompts; that year's photos
+      alongside.
+- [x] Desktop: encrypted storage with the key in the system keychain, autosave, rolling backups,
+      recovery from damage. Verified end to end in the real app.
+- [x] Web: saved to the person's own Google Drive, merged across devices, never losing words to
+      an expired session or a lost connection.
+- [ ] Place individual photos inside a chapter: the illuminated-manuscript effect.
 
-- [x] Calm long-form writing surface; chapters placed at a year and month on the timeline.
-- [x] Local, encrypted storage with the key kept in the system keychain. Autosave and rolling
-      backups; damaged files recover from a backup. Verified end to end in the real app.
-- [x] Gentle, trauma-informed prompts that invite without demanding.
-- [x] A chapter shows that year's photos as you write.
-- [ ] Place individual photos inside a chapter — the illuminated-manuscript effect.
-- [ ] Read view: the epic as a book.
+**Stories and timelines** (the new direction)
+- [ ] **Moments:** quick captures (a photo, a few lines) on the timeline, including those from
+      Haiku.
+- [ ] **Narration:** feed Sutōri chapters, moments and photos, and it tells your story back as an
+      interactive, narrated timeline. Needs a design decision on what writes the narration
+      (on-device, or an AI service the person opts into) and how privacy is kept.
+- [ ] Read view: your life as an illuminated book. Export to a printable book / PDF.
+- [ ] Gentle editing suggestions that keep your voice (opt-in).
+- [ ] On-device dictation.
 
-## Phase 2b — The website: sutori
-
-Built, and moved to its own repository: **[R0N1N9/sutori](https://github.com/R0N1N9/sutori)**.
-Sign in with Google, saved to the person's own Drive, photos never uploaded, edits from
-several devices merged. Its roadmap lives there.
-
-## Phase 2c — One story across monogatari, sutori and haiku
-
-- [x] Shared story format v2 ([`spec/STORY_FORMAT.md`](../spec/STORY_FORMAT.md)): one Drive file
-      per chapter and moment, photos stored once and never edited, revision history, and
-      "keep both" when two devices change the same thing. Language-neutral test cases in
-      [`spec/fixtures/`](../spec/fixtures/); TypeScript reference in `src/story/sync/`.
-- [ ] sutori moves to format v2: moments, attached photos (resized, location removed),
-      Drive's change feed, and a "kept both versions" view.
-- [ ] haiku (native Android) implements the format and passes the same test cases: camera-first
-      capture, share-to-haiku, offline queue, background sync.
-- [ ] Optional Google sign-in in the desktop app (same Google Cloud project), keeping the local
-      encrypted copy as the source of truth and Drive as a mirror.
-
-## Phase 3 — Dictation (on-device)
-
-- [ ] Speak instead of type, with speech recognized locally (offline) for absolute privacy.
-- [ ] Clean hand-off between spoken and written text; edit freely afterward.
-- [ ] Accessible, calm "listening" experience.
-
-## Phase 4 — Read your epic, and export it
-
-- [ ] Read your life back as an illuminated book, chapter by chapter.
-- [ ] Export to a printable book / PDF — a physical artifact of your story.
-
-## Phase 5 — Distribution
-
-- [x] Automated builds producing real installers (`.dmg`, `.exe`, Linux) via CI.
-- [ ] Code signing (Apple and Microsoft) so installers open without warnings.
+**Distribution**
+- [x] Installers for all three desktop platforms on every change.
+- [ ] Publish the website (Google client ID + GitHub Pages; see Sutōri's `docs/SETUP.md`).
+- [ ] Code signing (Apple, Microsoft) so installers open without warnings.
 - [ ] Tagged releases with a simple download page.
 
-## Later — 俳句 haiku (Android companion)
+## Haiku (俳句): Android
 
-- [ ] Lightweight capture app: a photo, a few lines, a spoken thought, on the go.
-- [ ] Shared private data format so captures flow into the desktop epic.
-- [ ] Deliberately minimal — the short form, not the whole book.
+Built, in [R0N1N9/haiku](https://github.com/R0N1N9/haiku): check-ins, three-line reflections,
+Recon insights, the self-map, a safety plan with **Help now** on every screen, and Google sync that
+is end-to-end encrypted with the person's passphrase. Its own plan is in Haiku's `docs/PLAN.md`.
 
-## Guardrails that hold across every phase
+## One story across the suite
 
-- Privacy is absolute: local-first, encrypted, no telemetry, no accounts.
-- Trauma-informed: user sets the pace; safety is always reachable; nothing is forced.
+The apps should share one story through the person's own Google Drive. Two designs exist today:
+
+| | Haiku (built) | Sutōri's draft format v2 ([`spec/`](../spec/)) |
+|---|---|---|
+| In Drive | One encrypted file, `haiku.vault` (`monogatari.vault/1` around `monogatari.exchange/1`) | One file per chapter, moment and photo |
+| Protection | Encrypted with the person's passphrase | Google sign-in only (so far) |
+| What it holds | Check-ins, reflections, self-map | Chapters, moments, photos |
+| Two devices edit the same item | Newer edit wins | Both versions kept |
+
+- [x] Both apps use one Google Cloud project, so they can open the same Drive app folder.
+- [x] Draft format v2 with language-neutral test cases and a TypeScript reference implementation.
+- [ ] **Decide the shared design**: most likely v2's one-file-per-item layout and "keep both" rule,
+      with Haiku's passphrase encryption applied to every file, and Haiku's check-ins and
+      reflections as kinds of item alongside chapters and moments.
+- [ ] Update the spec and test cases to that design; Sutōri and Haiku implement it and pass them.
+- [ ] Optional Google sign-in in the Sutōri desktop app, keeping its encrypted local copy as the
+      source of truth.
+
+## Guardrails that hold across every step
+
+- Private by default: local-first, encrypted, no telemetry, no server of ours.
+- Trauma-informed: the person sets the pace; safety is always reachable; nothing is forced.
 - Beautiful and calm, never clinical or gamified.

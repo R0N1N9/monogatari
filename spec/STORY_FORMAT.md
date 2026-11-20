@@ -1,9 +1,16 @@
-# Story format, version 2
+# Story format, version 2 (draft)
 
-The shared agreement between **monogatari** (desktop), **sutori** (web), and
-**haiku** (Android). Each app is written in a different language, so they
-share this document and the test cases in [`fixtures/`](fixtures/) instead of
-code. An app conforms when it passes every case in `fixtures/`.
+The shared agreement between the apps of the Monogatari suite: **Sutōri**
+(desktop and web, TypeScript and Rust) and **Haiku** (Android, Kotlin). They
+are written in different languages, so they share this document and the test
+cases in [`fixtures/`](fixtures/) instead of code. An app conforms when it
+passes every case in `fixtures/`.
+
+> **Status: draft.** Haiku already syncs with its own format (§11). Before this
+> is final it will be aligned with Haiku: most likely keeping this layout and
+> the "keep both" rule, encrypting every file with the person's passphrase as
+> Haiku does, and adding Haiku's check-ins and reflections as kinds of item.
+> See the [roadmap](../docs/ROADMAP.md#one-story-across-the-suite).
 
 The words MUST, MUST NOT, SHOULD and MAY mean what RFC 2119 says.
 
@@ -25,8 +32,8 @@ The words MUST, MUST NOT, SHOULD and MAY mean what RFC 2119 says.
 ## 2. Where things live
 
 Everything is in the Google Drive **application data folder**
-(`appDataFolder`) of the person's account, which only apps in the
-monogatari Google Cloud project can open. All three apps MUST use OAuth
+(`appDataFolder`) of the person's account, which only apps in the suite's
+Google Cloud project can open. All three apps MUST use OAuth
 clients in that **one** project and request the `drive.appdata` scope.
 
 Files are flat (no subfolders), named by kind and id:
@@ -281,3 +288,21 @@ on the device that chose them).
   safe), but it MUST be added here and, if it is content, to §4.5.
 - Anything else increases `format`, and apps refuse to overwrite files with a
   format newer than they understand (§5).
+
+---
+
+## 11. Haiku's current format (for alignment)
+
+Haiku (Android) syncs today with two formats of its own, documented in Haiku's
+`docs/PLAN.md` §5:
+
+- **`monogatari.exchange/1`**: one JSON snapshot holding `checkIns`,
+  `reflections` and `selfItems`. Every record has a UUID `id`, `createdAt`,
+  `updatedAt` and a `deleted` flag. It is also Haiku's export/import format.
+- **`monogatari.vault/1`**: that snapshot encrypted with the person's
+  passphrase (PBKDF2-HMAC-SHA256 → AES-256-GCM), stored as `haiku.vault` in the
+  same Drive app folder.
+- Merging: union by id; the later `updatedAt` wins (ties keep the local copy).
+
+Version 2 must either carry these records or define how they move across, and
+must decide whether every file is encrypted the same way.

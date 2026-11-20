@@ -1,6 +1,6 @@
 # Safety
 
-monogatari is a tool for reflection, meaning-making, and resilience. It is **not** therapy, it does
+The Monogatari suite (Sutōri and Haiku) is a tool for reflection, meaning-making, and resilience. It is **not** therapy, it does
 **not** provide medical or psychological advice, it does **not** diagnose, and it is **not** an
 emergency service. It is meant to stand alongside real-world support and professional care — never
 to replace them.
